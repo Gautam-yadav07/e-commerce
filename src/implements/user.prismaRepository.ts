@@ -1,6 +1,7 @@
 
 import prisma from "../config/prisma.js";
-import type{ UserRepository,UserInput, UserCreatedResponse } from "../repositories/user.repository.js";
+import type{ UserRepository } from "../repositories/user.repository.js";
+import type { UserCreatedResponse, UserInput } from "../types/authTypes.js";
 
 export class PrismaUserRepository implements UserRepository {
   async createUser(user:UserInput):Promise<UserCreatedResponse>{

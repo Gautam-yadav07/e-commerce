@@ -4,13 +4,13 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 
-const DB = process.env.DATABASE_URL;
+const DATABASE_URL = process.env.DATABASE_URL;
 
-if(!DB) {
+if(!DATABASE_URL) {
   throw new Error("No DB Url Provided");
 }
 
-const adapter = new PrismaPg({ connectionString: DB });
+const adapter = new PrismaPg({ connectionString: DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
 
 export default prisma;
