@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import authRoutes from "./routes/user.route.js";
+import { errorHandler } from './middlewares/error.middleware.js';
 
 dotenv.config();
 
@@ -14,6 +15,8 @@ app.use("/health", (req, res)=>{
 });
 
 app.use("/api/v1/auth", authRoutes);
+
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3000;
 

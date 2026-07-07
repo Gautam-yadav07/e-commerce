@@ -1,5 +1,10 @@
 import type{ Request, Response } from 'express';
 import { userRegisterService} from '../services/user.service.js';
+import { handleSuccessResponse } from '../utils/handleSuccessResponse.js';
+import { handleErrorResponse } from '../utils/handleErrorResponse.js';
+import { AppError } from '../middlewares/error.middleware.js';
+import { registerSchema } from '../validators/register.schema.js';
+// import { AppError } from '../middlewares/error.middleware.js';
 
 
 export const userRegisterController = async (req: Request, res: Response)=> {
@@ -7,34 +12,20 @@ export const userRegisterController = async (req: Request, res: Response)=> {
     const { email, name } = req.body;
 
     if (!email || !name) {
-      return res.status(400).json({ 
-        success:false,
-        error: 'Email and name are required' 
-      });
-    }
 
+     handleErrorResponse(res,400, "Email and name are required");
+     }
     const user = await userRegisterService({ email, name });
     
-    res.status(201).json({ 
-      success:true,
-      message: 'User created successfully',
-      data: user 
-    });
-
+    handleSuccessResponse(res,201, "User created Successfully",user)
+    
   } catch (error:any) {
-    res.status(500).json({ 
-      success:false,
-      error: error.message,
-    });
+     throw new AppError(500,"Something went wrong", error.message)
+   
   }
 };
 
 
 
-// const handleResponse = (res, status, message, data=null)=>{
-//     res.status(status).json({
-//         status,
-//         message,
-//         data,
-//     })
-// }
+
+
