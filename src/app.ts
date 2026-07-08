@@ -2,6 +2,8 @@ import express from 'express';
 import authRoutes from './routes/user.route.js'
 import { errorHandler } from './middlewares/error.middleware.js';
 
+
+
 const app = express();
 
 app.use(express.json());

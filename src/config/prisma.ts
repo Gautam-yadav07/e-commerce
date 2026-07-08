@@ -7,7 +7,7 @@ dotenv.config();
 const DATABASE_URL = process.env.DATABASE_URL;
 
 if(!DATABASE_URL) {
-  throw new Error("No DB Url Provided");
+  throw new Error("No Database Url Provided");
 }
 
 const adapter = new PrismaPg({ connectionString: DATABASE_URL });

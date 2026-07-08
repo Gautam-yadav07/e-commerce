@@ -97,7 +97,7 @@ export class PrismaUserRepository implements UserRepository {
 
   async updateRefreshToken(userId: number, refreshToken: string): Promise<void> {
     
-  await prisma.user.update({
+  const updatedToken = await prisma.user.update({
     where: { id: userId },
     data: { refresh_token: refreshToken }
   })
