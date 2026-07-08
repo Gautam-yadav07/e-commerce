@@ -13,8 +13,25 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String
-  createdAt DateTime @default(now())
+  id            Int      @id @default(autoincrement())
+  email         String   @unique
+  name          String
+  password      String
+  phone_number      String   @unique
+  gender        String
+  role_id       Int
+  role_name     Role     @relation(fields: [role_id], references: [id])
+  refresh_token String?
+  updated_at    DateTime @default(now())
+  created_at    DateTime @default(now())
+
+  @@map("users")
+}
+
+model Role {
+  id        Int    @id @default(autoincrement())
+  role_name String @unique
+  users     User[]
+
+  @@map("roles")
 }

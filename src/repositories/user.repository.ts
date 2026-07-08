@@ -1,9 +1,11 @@
-import type { UserCreatedResponse, UserInput } from "../types/authTypes.js";
-
+import type { FindByEmailResponse, RefreshTokenUserResponse, RegisterInput, RegisterResponse, getUserProfileResponse } from "../types/authTypes.js";
 
 export interface UserRepository {
-  createUser(user: UserInput): Promise<UserCreatedResponse>;
-  // updateUserRole(userId: number, roleId: number): Promise<void>;
-}
+  createUser(user: RegisterInput): Promise<RegisterResponse>;
+  findByEmail(email:string):Promise<FindByEmailResponse|null>;
+  findById(id:number):Promise<getUserProfileResponse| null>
+  findByIdWithRefreshToken(id:number):Promise<RefreshTokenUserResponse | null>
+  updateRefreshToken(userId: number, refreshToken: string): Promise<void>
 
+}
 

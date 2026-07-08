@@ -9,12 +9,12 @@ export const authorize= (...roles:string[])=>{
   return (req:Request, res:Response, next:NextFunction):void=>{
 
     if(!req.user){
-       handleErrorResponse(res,401, "Unauthorized");
+       handleErrorResponse(res, 401, "Unauthorized");
        return
     }
 
     if(!roles.includes(req.user.role)){
-      handleErrorResponse(res,403, "Forbidden")
+      handleErrorResponse(res, 403, "Forbidden")
       return;
     }
 

@@ -1,13 +1,11 @@
 import type { NextFunction, Request, Response } from "express"
 import { handleErrorResponse } from "../utils/handleErrorResponse.js"
-import jwt from 'jsonwebtoken'
-import type { AuthenticatedUser } from "../types/authTypes.js"
 import { verifyToken } from "../utils/verifyToken.js"
 import { AppError } from "../utils/appError.js"
 
 
 
-export const authentication= (res:Response, req:Request, next:NextFunction)=>{
+export const authentication= (req:Request,res:Response, next:NextFunction)=>{
   try {
     const authHeader = req.headers.authorization;
     if(!authHeader){
@@ -21,11 +19,12 @@ export const authentication= (res:Response, req:Request, next:NextFunction)=>{
     }
 
     const decoded = verifyToken(token);
-      req.user = decoded ;
+    req.user = decoded ;
+    next();
     
     
-  } catch (error:any) {
-    next(new AppError(500,"Internal server error", error.message));
+  } catch (error) {
+    next(new AppError(500,"Internal server error"));
   }
 }
 
