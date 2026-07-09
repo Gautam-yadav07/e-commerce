@@ -1,6 +1,7 @@
 import { UserRepositoryFactory } from "../factories/auth.repository.factory.js";
 import { SellerRepositoryFactory } from "../factories/seller.repository.factory.js";
-import type { CreateSellerProfileInput } from "../repositories/seller.repository.js";
+import type { CreateSellerProfileInput } from "../types/seller.types.js";
+
 import { AppError } from "../utils/appError.js";
 
 
