@@ -1,5 +1,5 @@
 import type{ Request, Response,NextFunction } from 'express';
-import { generateAccessTokenService, getUserProfileService, userLoginService, userRegisterService} from '../services/user.service.js';
+import { generateAccessTokenService, getUserProfileService, userLoginService, userRegisterService} from '../services/auth.service.js';
 import { handleSuccessResponse } from '../utils/handleSuccessResponse.js';
 import { handleErrorResponse } from '../utils/handleErrorResponse.js';
 
@@ -38,12 +38,12 @@ export const userLoginController = async(req:Request, res:Response, next:NextFun
     res.cookie("refreshToken", user.refreshToken, {
       httpOnly: true,
       sameSite: "strict",
+      maxAge: 7*24*60*60*1000
     })
 
    return handleSuccessResponse(res,200,"User Logged In  Succesfully", user)
    
   } catch (error) {
-    // next(new AppError(500, "Something went wrong"));
     next(error)
   }
 }
@@ -67,12 +67,13 @@ export const getUserProfileController = async(req:Request, res:Response, next:Ne
 
 
 
-export const refreshAccessTokenController = async (req: Request, res: Response, next: NextFunction) => {
+export const generateAccessTokenController = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const refreshToken = req.cookies.refresh_token
+    
+    const refreshToken = req.cookies.refreshToken;
 
     if(!refreshToken){
-      return handleErrorResponse(res, 401, "Refresh token is required")
+      return handleErrorResponse(res, 401, "Refresh token is required...")
     }
 
     const token = await generateAccessTokenService(refreshToken)

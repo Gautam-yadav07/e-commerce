@@ -1,9 +1,10 @@
 import prisma from "../config/prisma.js";
-import { UserRepositoryFactory } from "../factories/user.repository.factory.js";
+import { UserRepositoryFactory } from "../factories/auth.repository.factory.js";
 import bcrypt from "bcryptjs";
 import { AppError } from "../utils/appError.js";
 import jwt from 'jsonwebtoken'
 import type { AuthenticatedUser, RegisterInput } from "../types/authTypes.js";
+import { verifyToken } from "../utils/verifyToken.js";
 
 
 export interface UserLoginInput{
@@ -101,11 +102,12 @@ export const getUserProfileService = async(id:number)=>{
 
 
 export const generateAccessTokenService = async (refreshToken: string) => {
-  if(!refreshToken){
-    throw new AppError(401, "Refresh token is required")
-  }
+  // if(!refreshToken){
+  //   throw new AppError(401, "Refresh token is required....")
+  // }
 
-  const decoded = jwt.verify(refreshToken, JWT_SECRET_KEY as string ) as AuthenticatedUser
+  const decoded = jwt.verify(refreshToken, JWT_SECRET_KEY) as AuthenticatedUser
+  console.log(decoded)
 
   const user = await userRepository.findByIdWithRefreshToken(decoded.id)
 
@@ -113,10 +115,11 @@ export const generateAccessTokenService = async (refreshToken: string) => {
     throw new AppError(401, "Unauthorized")
   }
 
+
   const isRefreshTokenValid = await bcrypt.compare(refreshToken, user.refresh_token)
 
   if(!isRefreshTokenValid){
-    throw new AppError(401, "Unauthorized")
+    throw new AppError(401, "Unauthorized....")
   }
 
   const accessToken = jwt.sign(
@@ -129,5 +132,7 @@ export const generateAccessTokenService = async (refreshToken: string) => {
     { expiresIn: "15m" }
   )
 
-  return { accessToken }
+  return { 
+    accessToken 
+  }
 }

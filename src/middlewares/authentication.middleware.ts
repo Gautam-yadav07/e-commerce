@@ -8,14 +8,15 @@ import { AppError } from "../utils/appError.js"
 export const authentication= (req:Request,res:Response, next:NextFunction)=>{
   try {
     const authHeader = req.headers.authorization;
+    console.log(authHeader)
     if(!authHeader){
-      return handleErrorResponse(res,401,"Unauthorized");
+      throw new AppError(401,"Unauthorized");
     }
 
     const token = authHeader?.split(' ')[1];
 
     if(!token){
-      return handleErrorResponse(res, 401, "Unauthorized");
+    throw new AppError(401,"Unauthorized");
     }
 
     const decoded = verifyToken(token);
@@ -24,7 +25,7 @@ export const authentication= (req:Request,res:Response, next:NextFunction)=>{
     
     
   } catch (error) {
-    next(new AppError(500,"Internal server error"));
+    next(error);
   }
 }
 

@@ -3,6 +3,7 @@ import { AppError } from "../utils/appError.js"
 
 
 export const errorHandler =(err:Error, req:Request, res:Response, next:NextFunction)=>{
+console.log("Error", err)
 
   if(err instanceof AppError){
     
@@ -20,7 +21,6 @@ export const errorHandler =(err:Error, req:Request, res:Response, next:NextFunct
     status: 500,
     message: "Internal Server Error",
   });
-
 
 }
 

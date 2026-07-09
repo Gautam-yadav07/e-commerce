@@ -1,6 +1,6 @@
 import type { FindByEmailResponse, RefreshTokenUserResponse, RegisterInput, RegisterResponse, getUserProfileResponse } from "../types/authTypes.js";
 
-export interface UserRepository {
+export interface AuthRepository {
   createUser(user: RegisterInput): Promise<RegisterResponse>;
   findByEmail(email:string):Promise<FindByEmailResponse|null>;
   findById(id:number):Promise<getUserProfileResponse| null>
