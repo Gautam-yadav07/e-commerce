@@ -7,5 +7,7 @@ export interface AuthRepository {
   findByIdWithRefreshToken(id:number):Promise<RefreshTokenUserResponse | null>
   updateRefreshToken(userId: number, refreshToken: string): Promise<void>
 
+  updateUserRole(userId:number,roleId:number):Promise<void>
+
 }
 

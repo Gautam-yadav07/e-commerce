@@ -13,6 +13,8 @@ const sellerRepository = SellerRepositoryFactory.create()
 export const createSellerProfileService = async(data:CreateSellerProfileInput)=>{
   const {shop_name,ifsc_code,gst_number,bank_account_number, user_id} = data;
 
+  console.log(data )
+
   const existingSeller = await sellerRepository.findSellerProfileByUserId(user_id)
 
   if(existingSeller){

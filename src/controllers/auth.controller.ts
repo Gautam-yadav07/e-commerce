@@ -42,7 +42,6 @@ export const userLoginController = async(req:Request, res:Response, next:NextFun
 }
 
 
-
 export const getUserProfileController = async(req:Request, res:Response, next:NextFunction)=>{
   try {
     const id = req.user?.id;
@@ -52,7 +51,9 @@ export const getUserProfileController = async(req:Request, res:Response, next:Ne
     }
 
     const user = await getUserProfileService(id);
-     return handleSuccessResponse(res,200, "User details fetched Successfully", user)
+
+     return handleSuccessResponse(res,200, "User details fetched Successfully", user);
+     
   } catch (error) {
     next(error)
   }

@@ -17,7 +17,7 @@ export const createSellerProfileController = async(req:Request, res:Response, ne
 try {
 
   const userId = req.user.id;
-  const data = {userId, ...req.body}
+  const data = {user_id: userId, ...req.body}
   const newSeller = await createSellerProfileService(data);
 
   return handleSuccessResponse(res, 201, "Seller Profile created successfully", newSeller)

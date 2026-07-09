@@ -1,7 +1,7 @@
 import type { Request,Response,NextFunction } from "express"
 import { handleErrorResponse } from "../utils/handleErrorResponse.js"
 
-export const authorize= (...roles:string[])=>{
+export const authorization= (...roles:string[])=>{
     if(roles.length ===0){
         throw new Error("Middleware requires at least one role")
     }

@@ -4,7 +4,6 @@ import bcrypt from "bcryptjs";
 import { AppError } from "../utils/appError.js";
 import jwt from 'jsonwebtoken'
 import type { AuthenticatedUser, RegisterInput } from "../types/authTypes.js";
-import { verifyToken } from "../utils/verifyToken.js";
 
 
 export interface UserLoginInput{
@@ -43,13 +42,13 @@ export const userRegisterService = async (name:string,email:string,password:stri
 
 
 export const userLoginService = async(data:UserLoginInput)=>{
-  const user = await userRepository.findByEmail(data.email)
+  const user = await userRepository.findByEmail(data.email);
 
   if(!user){
     throw new AppError(401,"Invalid email or password")
   }
 
-  const isMatch = await bcrypt.compare(data.password, user.password)
+  const isMatch = await bcrypt.compare(data.password, user.password);
 
   if(!isMatch){
     throw new AppError(401,"Invalid email or password")
@@ -62,17 +61,17 @@ export const userLoginService = async(data:UserLoginInput)=>{
     },
     JWT_SECRET_KEY as string,
     {expiresIn:'15m'}
-  )
+  );
 
   const refreshToken = jwt.sign(
     {id:user.id},
     JWT_SECRET_KEY as string,
     {expiresIn:'7d'}
-  )
+  );
 
-  const hashedRefreshToken = await bcrypt.hash(refreshToken, 10)
+  const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
 
-  const token = await userRepository.updateRefreshToken(user.id, hashedRefreshToken)
+  const token = await userRepository.updateRefreshToken(user.id, hashedRefreshToken);
 
   return{
     accessToken,
@@ -87,7 +86,6 @@ export const userLoginService = async(data:UserLoginInput)=>{
 
   }
 }
-
 
 
 export const getUserProfileService = async(id:number)=>{

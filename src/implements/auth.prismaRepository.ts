@@ -12,7 +12,7 @@ export class PrismaAuthRepository implements AuthRepository {
         password: user.hashedPassword,
         phone_number: user.phone_number,
         gender: user.gender,
-        role_id: 1,
+        role_id: 1
 
       },
       include:{
@@ -106,6 +106,14 @@ export class PrismaAuthRepository implements AuthRepository {
     data: { refresh_token: refreshToken }
   })
 }
-
+async updateUserRole(userId: number, roleId: number): Promise<void> {
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        role_id: roleId,
+        updatedAt: new Date(),
+      },
+    });
+  }
   
 }

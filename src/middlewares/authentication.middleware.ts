@@ -8,7 +8,7 @@ import { AppError } from "../utils/appError.js"
 export const authentication= (req:Request,res:Response, next:NextFunction)=>{
   try {
     const authHeader = req.headers.authorization;
-    console.log(authHeader)
+   
     if(!authHeader){
       throw new AppError(401,"Unauthorized");
     }

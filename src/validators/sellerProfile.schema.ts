@@ -7,7 +7,7 @@ export const sellerProfileSchema = z.object({
 
   gst_number:z.string().min(15, "Enter a valid gst number").max(15,"Enter a valid gst number").trim(),
 
-  bank_account:z.string().max(10).trim(),
+  bank_account_number:z.string().max(10).trim(),
 
   shop_name:z.string().min(4).max(50).trim()
 

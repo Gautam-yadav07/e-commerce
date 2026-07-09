@@ -1,5 +1,6 @@
 import prisma from "../config/prisma.js";
-import type { CreateSellerProfileInput, SellerProfileResponse, SellerRepository } from "../repositories/seller.Repository.js";
+import type { SellerRepository } from "../repositories/seller.repository.js";
+import type { CreateSellerProfileInput, SellerProfileResponse } from "../types/seller.types.js";
 
 export class PrismaSellerRepository implements SellerRepository{
   async createSellerProfile(seller: CreateSellerProfileInput): Promise<SellerProfileResponse> {

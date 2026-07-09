@@ -21,24 +21,6 @@ export enum UserRole {
 }
 
 
-export interface CreateUser {
-  email: string;
-  name: string;
-  password:string;
-  // gender:string;
-  phone_no:string;
-  // role_id:number;
-
-}
-
-
-export interface UserCreatedResponse {
-  id: number;
-  name: string;
-  email: string;
-  created_at: Date;
-
-}
 
  export interface UserInput {
   name: string;

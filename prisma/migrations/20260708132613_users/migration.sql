@@ -9,11 +9,7 @@
 -- DropIndex
 DROP INDEX "users_phone_no_key";
 
--- AlterTable
-ALTER TABLE "users" DROP COLUMN "phone_no",
-ADD COLUMN     "phone_number" TEXT NOT NULL,
-ALTER COLUMN "refresh_token" DROP NOT NULL,
-ALTER COLUMN "updated_at" SET DEFAULT CURRENT_TIMESTAMP;
+
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_phone_number_key" ON "users"("phone_number");
