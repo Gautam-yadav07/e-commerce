@@ -14,6 +14,9 @@ export class PrismaAuthRepository implements AuthRepository {
         gender: user.gender,
         role_id: 1,
 
+      },
+      include:{
+        role_name:true
       }
     });
 
@@ -23,7 +26,8 @@ export class PrismaAuthRepository implements AuthRepository {
     email:newUser.email,
     gender:newUser.gender,
     phone_number:newUser.phone_number,
-    role_id: newUser.role_id,
+    role_name:newUser.role_name.role_name,
+
     created_at:newUser.created_at
   }
   }

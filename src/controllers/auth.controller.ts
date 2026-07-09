@@ -8,14 +8,9 @@ export const userRegisterController = async (req: Request, res: Response, next:N
   try {
     const { email, name, password, phone_number, gender } = req.body ;
 
-    // if (!email || !name||!password ||!phone_number) {
-    //  return handleErrorResponse(res,400, "All the fields are required");
-    //  }
-
     const user = await userRegisterService(name, email, password, gender, phone_number);
 
-    handleSuccessResponse(res, 201, "User created Successfully", user)
-    return;
+    return handleSuccessResponse(res, 201, "User created Successfully", user);
     
   } catch (error) {
     console.error(error);
@@ -30,21 +25,19 @@ export const userLoginController = async(req:Request, res:Response, next:NextFun
   try {
    const {email, password} = req.body;
  
-  //  if(!email || !password){
-  //   return handleErrorResponse(res, 400, "Email and password are required")
-  //  }
-   const user = await userLoginService({email, password})
+   const user = await userLoginService({email, password});
 
     res.cookie("refreshToken", user.refreshToken, {
       httpOnly: true,
       sameSite: "strict",
       maxAge: 7*24*60*60*1000
     })
-
-   return handleSuccessResponse(res,200,"User Logged In  Succesfully", user)
+    
+    const { refreshToken: _, ...data } = user;
+   return handleSuccessResponse(res,200,"User Logged In  Succesfully", data);
    
   } catch (error) {
-    next(error)
+    next(error);
   }
 }
 
@@ -59,7 +52,7 @@ export const getUserProfileController = async(req:Request, res:Response, next:Ne
     }
 
     const user = await getUserProfileService(id);
-    handleSuccessResponse(res,200, "User details fetched Successfully", user)
+     return handleSuccessResponse(res,200, "User details fetched Successfully", user)
   } catch (error) {
     next(error)
   }
@@ -76,9 +69,10 @@ export const generateAccessTokenController = async (req: Request, res: Response,
       return handleErrorResponse(res, 401, "Refresh token is required...")
     }
 
-    const token = await generateAccessTokenService(refreshToken)
+    const token = await generateAccessTokenService(refreshToken);
 
-    return handleSuccessResponse(res, 200, "Access token generated successfully", token)
+    return handleSuccessResponse(res, 200, "Access token generated successfully", token);
+
   } catch (error) {
     next(error)
   }

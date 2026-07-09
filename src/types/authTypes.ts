@@ -72,7 +72,8 @@ export interface RegisterResponse{
   gender: string,
   phone_number:string,
   created_at:Date,
-  role_id:number
+  // role_id:number
+  role_name:string
 }
 
 
