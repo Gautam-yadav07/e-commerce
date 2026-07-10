@@ -7,7 +7,7 @@ import { AppError } from "../utils/appError.js";
 
 
 const sellerRepository = SellerRepositoryFactory.create()
-// const userRepository = UserRepositoryFactory.create()
+const userRepository = UserRepositoryFactory.create()
 
 
 export const createSellerProfileService = async(data:CreateSellerProfileInput)=>{
@@ -17,14 +17,22 @@ export const createSellerProfileService = async(data:CreateSellerProfileInput)=>
 
   const existingSeller = await sellerRepository.findSellerProfileByUserId(user_id)
 
+  const role = await userRepository.getRoleByName("seller")
+  if(!role){
+    throw new AppError(404, "User role is not found")
+  }
+  console.log(role)
+
   if(existingSeller){
     throw new AppError(409, "Seller Profile already exist")
   }
 
   const profile = await sellerRepository.createSellerProfile(data);
 
+  const updateRole = await userRepository.updateUserRole(data.user_id, role.role_id)
 
-  return profile
+
+  return profile;
 
    
 }

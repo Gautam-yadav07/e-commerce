@@ -1,4 +1,4 @@
-import type { FindByEmailResponse, RefreshTokenUserResponse, RegisterInput, RegisterResponse, getUserProfileResponse } from "../types/authTypes.js";
+import type { FindByEmailResponse, RefreshTokenUserResponse, RegisterInput, RegisterResponse, RoleResponse, getUserProfileResponse } from "../types/authTypes.js";
 
 export interface AuthRepository {
   createUser(user: RegisterInput): Promise<RegisterResponse>;
@@ -8,6 +8,8 @@ export interface AuthRepository {
   updateRefreshToken(userId: number, refreshToken: string): Promise<void>
 
   updateUserRole(userId:number,roleId:number):Promise<void>
+
+  getRoleByName(role_name:string):Promise<RoleResponse|null>
 
 }
 

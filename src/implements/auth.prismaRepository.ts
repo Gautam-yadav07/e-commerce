@@ -1,6 +1,6 @@
 import prisma from "../config/prisma.js";
 import type { AuthRepository } from "../repositories/auth.repository.js";
-import type { FindByEmailResponse, RefreshTokenUserResponse, RegisterInput, RegisterResponse, getUserProfileResponse } from "../types/authTypes.js";
+import type { FindByEmailResponse, RefreshTokenUserResponse, RegisterInput, RegisterResponse, RoleResponse, getUserProfileResponse } from "../types/authTypes.js";
 
 
 export class PrismaAuthRepository implements AuthRepository {
@@ -111,9 +111,25 @@ async updateUserRole(userId: number, roleId: number): Promise<void> {
       where: { id: userId },
       data: {
         role_id: roleId,
-        updatedAt: new Date(),
+        updated_at: new Date(),
       },
     });
+  }
+
+
+
+  async getRoleByName(role_name: string): Promise<RoleResponse | null> {
+    const role = await prisma.role.findUnique({
+      where:{role_name:role_name}
+    })
+    if(!role){
+      return null
+    }
+
+    return{
+      role_id:role.id,
+      role_name:role.role_name
+    }
   }
   
 }

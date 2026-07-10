@@ -32,7 +32,8 @@ export class PrismaSellerRepository implements SellerRepository{
       where:{user_id:userId},
       include:{
         user:true
-      }
+      },
+      
     })
     if(!seller){
       return null
