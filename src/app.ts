@@ -3,6 +3,7 @@ import authRoutes from './routes/auth.route.js'
 import { errorHandler } from './middlewares/error.middleware.js';
 import cookieParser from 'cookie-parser'
 import sellerRoutes from "./routes/seller.route.js"
+import productRoutes from './routes/product.route.js'
 
 
 
@@ -17,6 +18,7 @@ app.use("/health", (req, res)=>{
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/seller", sellerRoutes)
+app.use("/api/v1/product",productRoutes)
 
 app.use(errorHandler);
 
