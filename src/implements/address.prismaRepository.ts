@@ -30,4 +30,31 @@ export class PrismaAddressRepository implements AddressRepository{
 
         }
     }
+
+    async getAddressByUserId(userId: number): Promise<AddressResponse[]> {
+        const addresses = await prisma.addresses.findMany({
+            where:{
+                user_id:userId
+            },
+            // include:{
+            //     user:true
+            // }
+            orderBy:{
+                created_at:'desc'
+            }
+        })
+
+        return addresses.map((address)=>({
+            id:address.id,
+            user_id:address.user_id,
+            address_line:address.address_line,
+            city:address.city,
+            state:address.state,
+            country:address.country,
+            pin_code:address.pin_code,
+            created_at:address.created_at,
+            updated_at:address.updated_at,
+
+        }))
+    }
 }

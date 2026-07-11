@@ -16,3 +16,15 @@ export const createAddressService = async(data:CreateAddressInput)=>{
     const newAddress = await addressRepository.createAddress(data);
     return newAddress
 }
+
+
+export const getAddressByUserIdService = async(userId:number)=>{
+    const user = await authRepository.findById(userId);
+
+    if(!user){
+        throw new AppError(404, "User not found")
+    }
+
+    const addresses = await addressRepository.getAddressByUserId(userId);
+    return addresses
+}
