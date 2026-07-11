@@ -26,6 +26,7 @@ model User {
   created_at     DateTime          @default(now())
   addresses      Addresses[]
   sellerProfiles Seller_Profiles[]
+  cart       Carts?
 
   @@map("users")
 }
@@ -81,6 +82,19 @@ model Products {
 
   @@map("products")
 }
+
+model Carts {
+  id         Int      @id @default(autoincrement())
+  user_id    Int      @unique
+  user       User     @relation(fields: [user_id], references: [id])
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("carts")
+}
+
+
+
 
 enum ProductStatus {
   ACTIVE
