@@ -10,7 +10,7 @@ export interface CartItemResponse {
   cart_id: number;
   product_id: number;
   quantity: number;
-  price: string;
+  price: number;
   user_id?: number;
   created_at: Date;
   updated_at: Date;
