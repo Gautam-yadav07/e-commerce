@@ -18,3 +18,12 @@ export interface AddressResponse {
   created_at: Date;
   updated_at: Date;
 }
+
+
+export interface UpdateAddressInput {
+  address_line?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  pin_code?: string;
+}

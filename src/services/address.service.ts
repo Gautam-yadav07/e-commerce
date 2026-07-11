@@ -1,6 +1,6 @@
 import { AddressRepositoryFactory } from "../factories/address.repository.factory.js";
 import { AuthRepositoryFactory } from "../factories/auth.repository.factory.js";
-import type { CreateAddressInput } from "../types/address.types.js";
+import type { CreateAddressInput, UpdateAddressInput } from "../types/address.types.js";
 import { AppError } from "../utils/appError.js";
 
 
@@ -27,4 +27,25 @@ export const getAddressByUserIdService = async(userId:number)=>{
 
     const addresses = await addressRepository.getAddressByUserId(userId);
     return addresses
+}
+
+
+export const getAddressByIdService = async(addressId:number)=>{
+    const address = await addressRepository.getAddressById(addressId);
+
+    if(!address){
+        throw new AppError(404, "Address Not found");
+    }
+
+    return address;
+
+}
+
+export const updateAddressService = async(addressId:number, data:UpdateAddressInput)=>{
+    const address = await addressRepository.getAddressById(addressId);
+    if(!address){
+        throw new AppError(404, "Address not found")
+    }
+    const updatedAddress  = await addressRepository.updateAddress(addressId, data);
+    return updatedAddress
 }
