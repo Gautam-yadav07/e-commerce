@@ -17,7 +17,7 @@ export const createSellerProfileService = async(data:CreateSellerProfileInput)=>
 
   const existingSeller = await sellerRepository.findSellerProfileByUserId(user_id)
 
-  const role = await userRepository.getRoleByName("seller")
+  const role = await userRepository.getRoleByName("SELLER")
   if(!role){
     throw new AppError(404, "User role is not found")
   }

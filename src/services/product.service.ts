@@ -12,18 +12,29 @@ const sellerRepository = SellerRepositoryFactory.create()
 
 export const createProductService = async(data:CreateProductInput)=>{
 
-  const {name, description, price, seller_id, status, stock, discount} = data;
-
-  const isSeller = await sellerRepository.findSellerProfileByUserId(seller_id)
-
+  const isSeller = await sellerRepository.findSellerProfileByUserId(data.seller_id)
 
   if(!isSeller){
     throw new AppError(403, "You are not allowed to Add product")
   }
-
-  const newProduct = await productRepository.createProduct(data);
-
+  
+  const newProduct = await productRepository.createProduct({...data, seller_id:isSeller.id});
   return newProduct
 
+}
 
+
+export const getAllProductsService = async()=>{
+  const products = productRepository.getAllProducts();
+  return products;
+}
+
+
+export const getProductByIdService = async(id:number)=>{
+  const product  = await productRepository.getProductById(id);
+  if(!product){
+    throw new AppError(404, "Product not found")
+  }
+
+  return product;
 }

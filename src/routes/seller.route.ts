@@ -8,7 +8,7 @@ import { sellerProfileSchema } from '../validators/sellerProfile.schema.js';
 const router = express.Router()
 
 
-router.post("/profile",authentication,authorization('customer'), validator(sellerProfileSchema), createSellerProfileController);
+router.post("/profile",authentication,authorization('CUSTOMER'), validator(sellerProfileSchema), createSellerProfileController);
 
 
 export default router
