@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import { createAddressService, getAddressByIdService, getAddressByUserIdService, updateAddressService } from "../services/address.service.js";
+import { createAddressService, deleteAddressService, getAddressByIdService, getAddressByUserIdService, updateAddressService } from "../services/address.service.js";
 import { handleSuccessResponse } from "../utils/handleSuccessResponse.js";
 
 
@@ -46,6 +46,18 @@ export const updateAddressController = async(req:Request, res:Response, next:Nex
 
         const updatedAddress = await updateAddressService(addressId, req.body)
         return handleSuccessResponse(res, 200, "Address updated successfully", updatedAddress)
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const deleteAddressController = async(req:Request, res:Response, next:NextFunction)=>{
+    try {
+        const addressId = Number(req.params.addressId);
+        const userId = req.user.id;
+        const deletedAddress = await deleteAddressService(userId, addressId);
+
+        return handleSuccessResponse(res, 200, "Address deleted successfully", deletedAddress)
     } catch (error) {
         next(error)
     }

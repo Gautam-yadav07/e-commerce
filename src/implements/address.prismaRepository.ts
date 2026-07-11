@@ -109,4 +109,13 @@ export class PrismaAddressRepository implements AddressRepository{
             created_at:updatedAddress.created_at
         }
     }
+
+
+    async deleteAddress(addressId: number): Promise<boolean> {
+        console.log(addressId)
+        const deletedAddress = await prisma.addresses.delete({
+            where:{id:addressId}
+        });
+        return true
+    }
 }

@@ -49,3 +49,22 @@ export const updateAddressService = async(addressId:number, data:UpdateAddressIn
     const updatedAddress  = await addressRepository.updateAddress(addressId, data);
     return updatedAddress
 }
+
+
+export const deleteAddressService = async(userId:number,addressId:number)=>{
+
+    const address = await addressRepository.getAddressById(addressId);
+
+    if(!address){
+        throw new AppError(404, "Address not found");
+    }
+
+    const user = await authRepository.findById(userId);
+
+    if(address.user_id !== userId){
+        throw new AppError(403, "You do not have permission to delete this address.")
+    }
+
+    const deleteAddress  = await addressRepository.deleteAddress(addressId);
+    return deleteAddress
+}

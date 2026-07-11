@@ -8,4 +8,6 @@ export interface AddressRepository {
     getAddressById(addressId:number):Promise<AddressResponse | null>;
     
     updateAddress(addressId:number, address:UpdateAddressInput):Promise<AddressResponse>;
+    
+    deleteAddress(addressId:number):Promise<boolean>
 }
