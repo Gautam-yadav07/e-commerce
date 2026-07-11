@@ -23,4 +23,16 @@ export interface ProductResponse{
   status:ProductStatus
   created_at :Date
   updated_at: Date
+  shop_name?:string,
+  seller_user_id?:number
+}
+
+
+export interface UpdateProductInput {
+  name?: string;
+  description?: string;
+  price?: number;
+  discount?: number;
+  stock?: number;
+  status?: ProductStatus;
 }
