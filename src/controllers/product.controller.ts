@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response} from "express";
-import { createProductService, deleteProductService, getAllProductsService, getProductByIdService, updateProductService } from "../services/product.service.js";
+import { createProductService, deleteProductService, getAllProductsService, getProductByIdService, getProductBySellerIdService, updateProductService } from "../services/product.service.js";
 import { handleSuccessResponse } from "../utils/handleSuccessResponse.js";
 
 
@@ -63,6 +63,20 @@ export const deleteProductController = async(req:Request, res:Response, next:Nex
     const productId = Number(req.params.productId);
     const deletedProduct = await deleteProductService(sellerId, productId);
     handleSuccessResponse(res,200, "Product deleted successfully", deletedProduct);
+  } catch (error) {
+    next(error)
+  }
+}
+
+
+export const getProductsBySellerIdController = async(req:Request, res:Response, next:NextFunction)=>{
+  try {
+    const sellerId = req.user.id;
+
+    const products = await getProductBySellerIdService(sellerId);
+
+    return handleSuccessResponse(res, 200, "All the Product of a Seller", products)
+    
   } catch (error) {
     next(error)
   }

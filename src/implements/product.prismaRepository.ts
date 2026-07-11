@@ -137,4 +137,31 @@ async deleteProduct(id: number): Promise<Boolean> {
   })
   return true;
 }
+
+async getProductBySellerId(id: number): Promise<ProductResponse[]> {
+  const products = await prisma.products.findMany({
+    where:{seller_id:id},
+    orderBy:{
+      created_at:'desc'
+    },
+    include:{
+      seller:true
+    }
+  })
+  return products.map((product) => ({
+      id: product.id,
+      seller_id: product.seller_id,
+      name: product.name,
+      description: product.description,
+      price: Number(product.price),
+      discount: Number(product.discount),
+      stock: product.stock,
+      status: product.status,
+      created_at: product.created_at,
+      updated_at: product.updated_at,
+      shop_name:product.seller.shop_name
+    }));
 }
+}
+
+

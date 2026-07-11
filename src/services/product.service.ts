@@ -78,3 +78,17 @@ export const deleteProductService = async (sellerUserId: number, productId: numb
 
   await productRepository.deleteProduct(productId);
 };
+
+
+
+export const getProductBySellerIdService = async(sellerId:number)=>{
+
+  const seller = await sellerRepository.findSellerProfileByUserId(sellerId);
+  if(!seller){
+    throw new AppError(404, "Seller profile not found");
+  }
+
+  const products = await productRepository.getProductBySellerId(seller.id);
+  return products
+
+}

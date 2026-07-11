@@ -8,6 +8,8 @@ export interface ProductRepository {
 
   updateProduct(id:number, product:UpdateProductInput):Promise<ProductResponse>
   deleteProduct(id:number):Promise<Boolean>;
+
+  getProductBySellerId(id:number):Promise<ProductResponse[]>
 }
 
 
