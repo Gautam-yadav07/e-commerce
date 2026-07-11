@@ -44,7 +44,7 @@ export interface RegisterInput {
   hashedPassword:string,
   phone_number:string,
   gender: Gender,
-  role_name:UserRole
+
 }
 
 
@@ -52,7 +52,7 @@ export interface RegisterResponse{
   id:number,
   name:string,
   email:string,
-  gender: string,
+  gender: Gender,
   phone_number:string,
   created_at:Date,
   // role_id:number
@@ -61,6 +61,18 @@ export interface RegisterResponse{
 
 
 export interface FindByEmailResponse{
+  id: number;
+  name: string;
+  email: string;
+  password: string;
+  phone_number: string;
+  gender: string | null;
+  role_id: number;
+  role_name: string;
+  created_at: Date;
+  updated_at: Date;
+}
+export interface FindByPhoneNumberResponse{
   id: number;
   name: string;
   email: string;

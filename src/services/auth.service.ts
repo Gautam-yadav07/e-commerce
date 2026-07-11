@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import { AppError } from "../utils/appError.js";
 import jwt from 'jsonwebtoken'
 import type { AuthenticatedUser, RegisterInput } from "../types/authTypes.js";
+import type { Gender } from "../generated/prisma/enums.js";
 
 
 export interface UserLoginInput{
@@ -18,11 +19,16 @@ if(!JWT_SECRET_KEY){
   throw new Error("JWT_SECRET_KEY is missing")
 }
 
-export const userRegisterService = async (name:string,email:string,password:string,gender:string,phone_number:string)=>{
+export const userRegisterService = async (name:string,email:string,password:string,gender:Gender,phone_number:string)=>{
   
-  const existingUser = await userRepository.findByEmail(email)
-  if(existingUser){
-    throw new AppError(409,"User already exist")
+  const existingEmail = await userRepository.findByEmail(email)
+  const existingPhone = await userRepository.findByPhoneNumber(phone_number)
+  if(existingEmail){
+    throw new AppError(409,"Email already exist")
+  }
+
+  if(existingPhone){
+    throw new AppError(409, "Phone number already exist")
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
