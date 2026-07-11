@@ -1,24 +1,32 @@
 import prisma from "../config/prisma.js";
+import type { UserRole } from "../generated/prisma/enums.js";
 import type { AuthRepository } from "../repositories/auth.repository.js";
 import type { FindByEmailResponse, RefreshTokenUserResponse, RegisterInput, RegisterResponse, RoleResponse, getUserProfileResponse } from "../types/authTypes.js";
 
 
 export class PrismaAuthRepository implements AuthRepository {
   async createUser(user:RegisterInput):Promise<RegisterResponse>{
-    const newUser = await prisma.user.create({
-      data:{
-        name: user.name,
-        email: user.email,
-        password: user.hashedPassword,
-        phone_number: user.phone_number,
-        gender: user.gender,
-        role_id: 1
 
-      },
-      include:{
-        role_name:true
-      }
+   const role = await prisma.role.upsert({
+      where: { role_name: "CUSTOMER" },
+      update: {},
+      create: { role_name: "CUSTOMER" },
     });
+
+    const newUser = await prisma.user.create({
+        data: {
+          name: user.name,
+          email: user.email,
+          password: user.hashedPassword,
+          phone_number: user.phone_number,
+          gender: user.gender,
+          role_id: role.id,
+        },
+        include: {
+          role_name: true,
+        },
+
+  });
 
     return {
     id: newUser.id,
@@ -30,6 +38,7 @@ export class PrismaAuthRepository implements AuthRepository {
 
     created_at:newUser.created_at
   }
+ 
   }
 
 
@@ -118,7 +127,7 @@ async updateUserRole(userId: number, roleId: number): Promise<void> {
 
 
 
-  async getRoleByName(role_name: string): Promise<RoleResponse | null> {
+  async getRoleByName(role_name: UserRole): Promise<RoleResponse | null> {
     const role = await prisma.role.findUnique({
       where:{role_name:role_name}
     })

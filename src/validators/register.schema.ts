@@ -11,7 +11,7 @@ export const registerSchema = z.object({
   phone_number: z.string().trim().min(10).max(12),
     
 
-  gender: z.enum(["male", "female", "other"], {
+  gender: z.enum(["MALE", "FEMALE", "OTHER"], {
     error: "Gender must be male, female, or other",
   }),
 });

@@ -1,4 +1,5 @@
 import type { JwtPayload } from "jsonwebtoken";
+import type { Gender, UserRole } from "../generated/prisma/enums.js";
 
 export interface AuthenticatedUser extends JwtPayload {
   id: number;
@@ -14,11 +15,11 @@ declare global {
   }
 }
 
-export enum UserRole {
-  CUSTOMER = "customer",
-  ADMIN = "admin",
-  SELLER = "seller",
-}
+// export enum UserRole {
+//   CUSTOMER = "customer",
+//   ADMIN = "admin",
+//   SELLER = "seller",
+// }
 
 
 
@@ -29,11 +30,11 @@ export enum UserRole {
   phone_no:string;
 }
 
-enum Gender {
-  MALE="male",
-  FEMALE= 'female',
-  OTHER = 'other'
-}
+// enum Gender {
+//   MALE="male",
+//   FEMALE= 'female',
+//   OTHER = 'other'
+// }
 
 
 
@@ -42,8 +43,8 @@ export interface RegisterInput {
   email:string,
   hashedPassword:string,
   phone_number:string,
-  gender: string,
-  role_id?:number
+  gender: Gender,
+  role_name:UserRole
 }
 
 
@@ -55,7 +56,7 @@ export interface RegisterResponse{
   phone_number:string,
   created_at:Date,
   // role_id:number
-  role_name:string
+  role_name:UserRole
 }
 
 

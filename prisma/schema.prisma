@@ -18,7 +18,7 @@ model User {
   name           String
   password       String
   phone_number   String            @unique
-  gender         String
+  gender         Gender
   role_id        Int
   role_name      Role              @relation(fields: [role_id], references: [id])
   refresh_token  String?
@@ -32,8 +32,8 @@ model User {
 
 model Role {
   id        Int    @id @default(autoincrement())
-  role_name String @unique
-  users     User[]
+  role_name UserRole @unique @default(CUSTOMER)
+  users     User[]  
 
   @@map("roles")
 }
@@ -86,4 +86,17 @@ enum ProductStatus {
   ACTIVE
   INACTIVE
   AVAILABLE
+}
+
+enum UserRole {
+  CUSTOMER
+  SELLER
+  ADMIN
+}
+
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
 }
