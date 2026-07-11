@@ -1,6 +1,7 @@
 import prisma from "../config/prisma.js";
+import type { Prisma } from "../generated/prisma/client.js";
 import type { ProductRepository } from "../repositories/product.repository.js";
-import type { CreateProductInput, ProductResponse } from "../types/product.types.js";
+import type { CreateProductInput, ProductResponse, UpdateProductInput } from "../types/product.types.js";
 
 export class PrismaProductRepository implements ProductRepository {
   
@@ -40,6 +41,9 @@ export class PrismaProductRepository implements ProductRepository {
     orderBy: {
       created_at: "desc",
     },
+    include:{
+      seller:true
+    }
   });
 
     return products.map((product) => ({
@@ -53,6 +57,7 @@ export class PrismaProductRepository implements ProductRepository {
       status: product.status,
       created_at: product.created_at,
       updated_at: product.updated_at,
+      shop_name:product.seller.shop_name
     }));
 }
 
@@ -78,7 +83,58 @@ async getProductById(id: number): Promise<ProductResponse | null> {
       status: product.status,
       created_at: product.created_at,
       updated_at: product.updated_at,
-
+      shop_name:product.seller.shop_name,
+      seller_user_id:product.seller.user_id
   }
+}
+
+async updateProduct(id: number, product: UpdateProductInput): Promise<ProductResponse> {
+
+  const data: Prisma.ProductsUpdateInput = {};
+
+      const fields = [
+        "name",
+        "description",
+        "price",
+        "discount",
+        "stock",
+        "status",
+      ] as const;
+
+      for (const field of fields) {
+        if (product[field] !== undefined) {
+          data[field] = product[field];
+        }
+      }
+
+
+    await prisma.products.update({
+      where: { id },
+      data,
+    });
+
+  const updatedProduct = await prisma.products.update({
+    where:{id},
+    data
+  });
+  return {
+      id: updatedProduct.id,
+      seller_id: updatedProduct.seller_id,
+      name: updatedProduct.name,
+      description: updatedProduct.description,
+      price: Number(updatedProduct.price),
+      discount: Number(updatedProduct.discount),
+      stock: updatedProduct.stock,
+      status: updatedProduct.status,
+      created_at: updatedProduct.created_at,
+      updated_at: updatedProduct.updated_at,
+  }
+}
+
+async deleteProduct(id: number): Promise<Boolean> {
+  const deleteProduct = await prisma.products.delete({
+    where:{id}
+  })
+  return true;
 }
 }
