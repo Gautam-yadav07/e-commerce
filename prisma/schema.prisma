@@ -79,6 +79,7 @@ model Products {
   status      ProductStatus          @default(ACTIVE)
   created_at  DateTime        @updatedAt
   updated_at  DateTime        @default(now())
+   cartItems     CartItems[]
 
   @@map("products")
 }
@@ -89,10 +90,26 @@ model Carts {
   user       User     @relation(fields: [user_id], references: [id])
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+  cartItems CartItems[]
 
   @@map("carts")
 }
 
+
+model CartItems {
+  id        Int     @id @default(autoincrement())
+  cart_id    Int     
+  cart      Carts    @relation(fields: [cart_id], references: [id], onDelete: Cascade)
+  product_id Int     
+  product   Products @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  quantity  Int
+  price     Decimal  @db.Decimal(10, 2)
+  created_at DateTime @default(now()) @db.Timestamp(6)
+  updated_at DateTime   @updatedAt
+
+  @@unique([cart_id, product_id], name: "unique_cart_product")
+  @@map("cart_items")
+}
 
 
 
