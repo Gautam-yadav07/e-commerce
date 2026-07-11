@@ -17,8 +17,8 @@ app.use("/health", (req, res)=>{
 })
 
 app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1/seller", sellerRoutes)
-app.use("/api/v1/product",productRoutes)
+app.use("/api/v1/sellers", sellerRoutes)
+app.use("/api/v1/products",productRoutes)
 
 app.use(errorHandler);
 
