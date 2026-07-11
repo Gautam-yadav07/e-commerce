@@ -1,5 +1,5 @@
 import prisma from "../config/prisma.js";
-import { UserRepositoryFactory } from "../factories/auth.repository.factory.js";
+import { AuthRepositoryFactory } from "../factories/auth.repository.factory.js";
 import bcrypt from "bcryptjs";
 import { AppError } from "../utils/appError.js";
 import jwt from 'jsonwebtoken'
@@ -11,7 +11,7 @@ export interface UserLoginInput{
   email:string,
   password:string
 }
-const userRepository = UserRepositoryFactory.create()
+const userRepository = AuthRepositoryFactory.create()
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY
 

@@ -4,6 +4,7 @@ import { errorHandler } from './middlewares/error.middleware.js';
 import cookieParser from 'cookie-parser'
 import sellerRoutes from "./routes/seller.route.js"
 import productRoutes from './routes/product.route.js'
+import addressRoutes from './routes/address.route.js'
 
 
 
@@ -18,7 +19,8 @@ app.use("/health", (req, res)=>{
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/sellers", sellerRoutes)
-app.use("/api/v1/products",productRoutes)
+app.use("/api/v1/products",productRoutes);
+app.use("/api/v1/addresses", addressRoutes)
 
 app.use(errorHandler);
 
