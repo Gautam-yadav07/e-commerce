@@ -3,7 +3,9 @@ import type { ProductRepository } from "../repositories/product.repository.js";
 import type { CreateProductInput, ProductResponse } from "../types/product.types.js";
 
 export class PrismaProductRepository implements ProductRepository {
+  
   async createProduct(product: CreateProductInput): Promise<ProductResponse> {
+  
     const newProduct = await prisma.products.create({
       data:{
         seller_id:product.seller_id,
@@ -15,7 +17,8 @@ export class PrismaProductRepository implements ProductRepository {
         discount:product.discount ?? null
 
       }
-    })
+    });
+    
 
     return {
       id:newProduct.id,
@@ -31,4 +34,51 @@ export class PrismaProductRepository implements ProductRepository {
 
     }
   }
+
+  async getAllProducts(): Promise<ProductResponse[]> {
+  const products = await prisma.products.findMany({
+    orderBy: {
+      created_at: "desc",
+    },
+  });
+
+    return products.map((product) => ({
+      id: product.id,
+      seller_id: product.seller_id,
+      name: product.name,
+      description: product.description,
+      price: Number(product.price),
+      discount: Number(product.discount),
+      stock: product.stock,
+      status: product.status,
+      created_at: product.created_at,
+      updated_at: product.updated_at,
+    }));
+}
+
+async getProductById(id: number): Promise<ProductResponse | null> {
+  const product = await prisma.products.findUnique({
+    where:{id},
+    include:{
+      seller:true
+    }
+  });
+  if(!product){
+    return null;
+  }
+
+  return {
+      id: product.id,
+      seller_id: product.seller_id,
+      name: product.name,
+      description: product.description,
+      price: Number(product.price),
+      discount: Number(product.discount),
+      stock: product.stock,
+      status: product.status,
+      created_at: product.created_at,
+      updated_at: product.updated_at,
+
+  }
+}
 }
