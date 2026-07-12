@@ -131,6 +131,16 @@ async updateProduct(id: number, product: UpdateProductInput): Promise<ProductRes
   }
 }
 
+  async updateProductStock(id: number, newStock: number): Promise<void> {
+    const updatedStock = await prisma.products.update({
+      where: { id },
+      data: {
+        stock: newStock,
+        updated_at: new Date(),
+      },
+    });
+  }
+
 async deleteProduct(id: number): Promise<Boolean> {
   const deleteProduct = await prisma.products.delete({
     where:{id}

@@ -10,6 +10,7 @@ export interface ProductRepository {
   deleteProduct(id:number):Promise<Boolean>;
 
   getProductBySellerId(id:number):Promise<ProductResponse[]>
+  updateProductStock(id:number, newStock:number):Promise<void>
 }
 
 
