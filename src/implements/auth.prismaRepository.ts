@@ -165,5 +165,16 @@ async updateUserRole(userId: number, roleId: number): Promise<void> {
     }
 
   }
+
+  async logoutUser(userId: number): Promise<void> {
+    const logout  = await prisma.user.update({
+      where:{
+        id:userId
+      },
+      data:{
+        refresh_token:null
+      }
+    })
+  }
   
 }

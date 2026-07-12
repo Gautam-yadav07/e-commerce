@@ -1,5 +1,5 @@
 import type{ Request, Response,NextFunction } from 'express';
-import { generateAccessTokenService, getUserProfileService, userLoginService, userRegisterService} from '../services/auth.service.js';
+import { generateAccessTokenService, getUserProfileService, logoutService, userLoginService, userRegisterService} from '../services/auth.service.js';
 import { handleSuccessResponse } from '../utils/handleSuccessResponse.js';
 import { handleErrorResponse } from '../utils/handleErrorResponse.js';
 
@@ -78,3 +78,26 @@ export const generateAccessTokenController = async (req: Request, res: Response,
     next(error)
   }
 }
+
+
+export const logoutController = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken) {
+      return handleErrorResponse(res,401, "Refresh token is required");
+    }
+
+    const logout = await logoutService(refreshToken);
+
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      sameSite: "strict",
+    });
+
+    return handleSuccessResponse(res, 200, "Logged out successfully",logout);
+
+  } catch (error) {
+    next(error);
+  }
+};

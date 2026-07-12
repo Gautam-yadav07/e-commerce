@@ -13,5 +13,7 @@ export interface AuthRepository {
 
   findByPhoneNumber(number:string):Promise<FindByPhoneNumberResponse | null>
 
+  logoutUser(userId:number):Promise<void>;
+
 }
 
