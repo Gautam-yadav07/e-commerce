@@ -1,9 +1,12 @@
 import dotenv from 'dotenv';
 import app from './app.js';
+import { connectRabbitMQ } from './config/rabbitmq.js';
+import { startEmailWorker } from './workers/email.worker.js';
 
 dotenv.config();
 
-
+await connectRabbitMQ();
+await startEmailWorker();
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, ()=>{
