@@ -108,3 +108,15 @@ export interface RoleResponse{
   role_id:number,
   role_name :string,
 }
+
+
+
+export interface findByResetPasswordTokenResponse{
+  id: number;
+  email: string;
+  password: string;
+  reset_password_token?:string,
+  reset_password_expiry?:Date | null,
+  created_at: Date;
+  updated_at: Date;
+}
