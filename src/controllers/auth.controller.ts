@@ -1,5 +1,5 @@
 import type{ Request, Response,NextFunction } from 'express';
-import { generateAccessTokenService, getUserProfileService, logoutService, userLoginService, userRegisterService} from '../services/auth.service.js';
+import { forgotPasswordService, generateAccessTokenService, getUserProfileService, logoutService, resetPasswordService, userLoginService, userRegisterService} from '../services/auth.service.js';
 import { handleSuccessResponse } from '../utils/handleSuccessResponse.js';
 import { handleErrorResponse } from '../utils/handleErrorResponse.js';
 
@@ -101,3 +101,36 @@ export const logoutController = async (req: Request, res: Response, next: NextFu
     next(error);
   }
 };
+
+export const forgotPasswordController = async(req:Request, res:Response, next:NextFunction)=>{
+
+  try{
+
+    const {email}=req.body;
+
+    const data = await forgotPasswordService(email);
+    console.log(email)
+
+    return handleSuccessResponse(res, 200, "A password reset link has been sent.", data );
+
+  }catch(error){
+
+    next(error);
+
+  }
+
+}
+
+
+export const resetPasswordController = async(req:Request, res:Response, next:NextFunction)=>{
+  try {
+    const {password, token} = req.body;
+
+    const resetPassword = await resetPasswordService(token, password);
+
+    return handleSuccessResponse(res, 200, "Password Reset Successfully", resetPassword);
+
+  } catch (error) {
+    next(error)
+  }
+}
