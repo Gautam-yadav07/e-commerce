@@ -1,4 +1,4 @@
-import type { FindByEmailResponse, FindByPhoneNumberResponse, RefreshTokenUserResponse, RegisterInput, RegisterResponse, RoleResponse, getUserProfileResponse } from "../types/authTypes.js";
+import type { FindByEmailResponse, FindByPhoneNumberResponse, RefreshTokenUserResponse, RegisterInput, RegisterResponse, RoleResponse, findByResetPasswordTokenResponse, getUserProfileResponse } from "../types/authTypes.js";
 
 export interface AuthRepository {
   createUser(user: RegisterInput): Promise<RegisterResponse>;
@@ -14,6 +14,12 @@ export interface AuthRepository {
   findByPhoneNumber(number:string):Promise<FindByPhoneNumberResponse | null>
 
   logoutUser(userId:number):Promise<void>;
+
+  saveResetPasswordToken(userId: number, token: string, expiry: Date): Promise<void>;
+
+  findByResetPasswordToken(token:string):Promise<findByResetPasswordTokenResponse|null>;
+
+  updatePassword(userId:number, hashedPassword:string):Promise<void>;
 
 }
 
