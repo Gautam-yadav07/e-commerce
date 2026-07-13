@@ -29,6 +29,9 @@ model User {
   cart       Carts?
   orders        Order[]
   orderItems    OrderItems[]    @relation("SellerOrderItems")
+  reset_password_token String?
+  reset_password_expiry DateTime?
+
 
   @@map("users")
 }
