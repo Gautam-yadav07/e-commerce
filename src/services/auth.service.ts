@@ -5,6 +5,8 @@ import { AppError } from "../utils/appError.js";
 import jwt from 'jsonwebtoken'
 import type { AuthenticatedUser, RegisterInput } from "../types/authTypes.js";
 import type { Gender } from "../generated/prisma/enums.js";
+import { publishForgotPasswordEmail } from "../queue/email.publisher.js";
+import crypto from 'crypto'
 
 
 export interface UserLoginInput {
@@ -169,10 +171,7 @@ export const logoutService = async (
     throw new AppError(401, "Unauthorized");
   }
 
-  const isValid = await bcrypt.compare(
-    refreshToken,
-    user.refresh_token
-  );
+  const isValid = await bcrypt.compare(refreshToken, user.refresh_token);
 
   if (!isValid) {
     throw new AppError(401, "Unauthorized");
@@ -180,3 +179,53 @@ export const logoutService = async (
 
   await userRepository.logoutUser(user.id);
 }
+
+
+export const forgotPasswordService = async (email: string) => {
+
+  const user = await userRepository.findByEmail(email);
+  if (!user) {
+    return;
+  }
+  const resetToken = crypto.randomBytes(32).toString("hex");
+
+  const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+
+  const expiry = new Date(Date.now() + 15 * 60 * 1000);
+
+  const savedResetToken = await userRepository.saveResetPasswordToken(
+    user.id,
+    hashedToken,
+    expiry
+  );
+  console.log(savedResetToken)
+  await publishForgotPasswordEmail({
+    email: user.email,
+    name: user.name,
+    token: resetToken
+  });
+
+}
+
+export const resetPasswordService = async (token: string, password: string) => {
+
+  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+  const user = await userRepository.findByResetPasswordToken(hashedToken);
+
+  if (!user) {
+
+    throw new AppError(400, "Invalid reset token.");
+  }
+
+  if (!user.reset_password_expiry || user.reset_password_expiry < new Date()) {
+
+    throw new AppError(400, "Reset token has expired.");
+
+  }
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  await userRepository.updatePassword(user.id, hashedPassword);
+
+}
+
