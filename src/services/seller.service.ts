@@ -1,5 +1,6 @@
 import { AuthRepositoryFactory } from "../factories/auth.repository.factory.js";
 import { SellerRepositoryFactory } from "../factories/seller.repository.factory.js";
+import { UserRole } from "../generated/prisma/enums.js";
 import type { CreateSellerProfileInput } from "../types/seller.types.js";
 
 import { AppError } from "../utils/appError.js";
@@ -17,7 +18,7 @@ export const createSellerProfileService = async(data:CreateSellerProfileInput)=>
 
   const existingSeller = await sellerRepository.findSellerProfileByUserId(user_id)
 
-  const role = await userRepository.getRoleByName("SELLER")
+  const role = await userRepository.getRoleByName(UserRole.SELLER)
   if(!role){
     throw new AppError(404, "User role is not found")
   }
