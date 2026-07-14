@@ -1,11 +1,12 @@
+import type { Prisma } from "../generated/prisma/client.js";
 import type {  OrderInput, OrderItemInput, OrderItemResponse, OrderResponse } from "../types/order.types.js"
 
 
 
 export interface OrderRepository{
-    createOrder(item:OrderInput):Promise<OrderResponse>;
+    createOrder(tx:Prisma.TransactionClient, item:OrderInput):Promise<OrderResponse>;
 
-    createOrderItem(item: OrderItemInput): Promise<OrderItemResponse>;
+    createOrderItem(tx:Prisma.TransactionClient, item: OrderItemInput): Promise<OrderItemResponse>;
 
     findOrdersByUserId(userId: number): Promise<OrderResponse[]>;
 

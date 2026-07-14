@@ -1,22 +1,23 @@
 
 import prisma from "../config/prisma.js";
-import type { OrderStatus, PaymentStatus } from "../generated/prisma/enums.js";
+import type { Prisma } from "../generated/prisma/client.js";
+import { OrderStatus, PaymentStatus } from "../generated/prisma/enums.js";
 import type { OrderRepository } from "../repositories/order.repository.js";
 import type { OrderInput, OrderItemInput, OrderItemResponse, OrderResponse } from "../types/order.types.js";
 
 
 
 export class PrismaOrderRepository implements OrderRepository{
-    async createOrder(order: OrderInput): Promise<OrderResponse> {
+    async createOrder(tx:Prisma.TransactionClient,order: OrderInput): Promise<OrderResponse> {
     
-        const createdOrder = await prisma.order.create({
+        const createdOrder = await tx.order.create({
 
             data: {
                 user_id: order.userId,
                 address_id: order.address_id,
                 total_amount: Number(order.total_amount),
-                payment_status: 'PENDING',
-                order_status: 'PENDING',
+                payment_status: PaymentStatus.PENDING,
+                order_status: OrderStatus.PENDING,
                 address_line: order.address_line,
                 city: order.city,
                 state: order.state,
@@ -46,9 +47,9 @@ export class PrismaOrderRepository implements OrderRepository{
         };
   }
 
-    async createOrderItem(item: OrderItemInput): Promise<OrderItemResponse> {
+    async createOrderItem(tx:Prisma.TransactionClient, item: OrderItemInput): Promise<OrderItemResponse> {
     
-        const created = await prisma.orderItems.create({
+        const created = await tx.orderItems.create({
 
             data: {
                 order_id: item.order_id,

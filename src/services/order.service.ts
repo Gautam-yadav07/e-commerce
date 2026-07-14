@@ -1,3 +1,4 @@
+import prisma from "../config/prisma.js";
 import { AddressRepositoryFactory } from "../factories/address.repository.factory.js";
 import { CartRepositoryFactory } from "../factories/cart.repository.factory.js";
 import { OrderRepositoryFactory } from "../factories/order.repository.factory.js";
@@ -47,10 +48,12 @@ export const checkoutService = async (
     throw new AppError(400, "Your cart is empty.");
   }
 
-  let totalAmount = 0;
-  const orderItemsToCreate: OrderItemToCreate[] = [];
+  return await prisma.$transaction(async(tx)=>{
 
-  for (const item of cartItems) {
+    let totalAmount = 0;
+    const orderItemsToCreate: OrderItemToCreate[] = [];
+
+    for (const item of cartItems) {
 
     const product = await productRepository.getProductById(item.product_id);
 
@@ -104,37 +107,40 @@ export const checkoutService = async (
     await productRepository.updateProductStock(product.id, newStock);
   }
 
-  const newOrder = await orderRepository.createOrder({
-    userId,
-    address_id: addressId,
-    total_amount: totalAmount,
-    address_line: address.address_line,
-    city: address.city,
-    state: address.state,
-    country: address.country,
-    pin_code: address.pin_code,
-  });
-
-
-  for (const item of orderItemsToCreate) {
-    await orderRepository.createOrderItem({
-      order_id: newOrder.id,
-      product_id: item.productId,
-      seller_id: item.sellerId,
-      quantity: item.quantity,
-      price: item.price,
-      subtotal: item.subtotal,
-      order_status:"PENDING"
+    const newOrder = await orderRepository.createOrder(tx,{
+      userId,
+      address_id: addressId,
+      total_amount: totalAmount,
+      address_line: address.address_line,
+      city: address.city,
+      state: address.state,
+      country: address.country,
+      pin_code: address.pin_code,
     });
+
+
+    for (const item of orderItemsToCreate) {
+      await orderRepository.createOrderItem(tx,{
+        order_id: newOrder.id,
+        product_id: item.productId,
+        seller_id: item.sellerId,
+        quantity: item.quantity,
+        price: item.price,
+        subtotal: item.subtotal,
+        order_status:"PENDING"
+      });
   }
 
 
   // await cartRepository.clearCart(cart.id);
 
-  return {
-    order: newOrder,
-    itemsCount: orderItemsToCreate.length,
-  };
+    return {
+      order: newOrder,
+      itemsCount: orderItemsToCreate.length,
+    };
+
+  })
+ 
 };
 
 
@@ -205,11 +211,8 @@ export const updateOrderItemStatusService = async (
   }
 
   else if (
-    allStatuses.every(
-      (s) =>
-        s === OrderStatus.SHIPPED ||
-        s === OrderStatus.DELIVERED
-    )
+    allStatuses.every((s) => s === OrderStatus.SHIPPED || 
+    s === OrderStatus.DELIVERED)
   ) {
     newOrderStatus = OrderStatus.SHIPPED;
   }
