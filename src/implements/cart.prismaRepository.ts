@@ -1,4 +1,5 @@
 import prisma from "../config/prisma.js";
+import type { TransactionClient } from "../generated/prisma/internal/prismaNamespace.js";
 import type { CartRepository } from "../repositories/cart.repository.js";
 import type { CartDetails, CartItemResponse, CartResponse } from "../types/cart.types.js";
 
@@ -165,6 +166,12 @@ export class PrismaCartRepository implements CartRepository {
         } catch (error) {
             return false;
         }
+    }
+
+    async clearCart(tx: TransactionClient, cartId: number): Promise<void> {
+        const cart = await tx.cartItems.deleteMany({
+            where:{cart_id:cartId}
+        })
     }
 
 }
