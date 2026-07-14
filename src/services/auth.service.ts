@@ -7,6 +7,7 @@ import type { AuthenticatedUser, RegisterInput } from "../types/authTypes.js";
 import type { Gender } from "../generated/prisma/enums.js";
 import { publishForgotPasswordEmail } from "../queue/email.publisher.js";
 import crypto from 'crypto'
+import { getCacheData, setCacheData } from "./redis.service.js";
 
 
 export interface UserLoginInput {
@@ -98,10 +99,18 @@ export const userLoginService = async (data: UserLoginInput) => {
 
 
 export const getUserProfileService = async (id: number) => {
+  const cacheKey = `user:{id}`
+  const cachedUser = await getCacheData(cacheKey)
+  
+  if(cachedUser){
+    return cachedUser
+  }
   const user = await userRepository.findById(id)
   if (!user) {
     throw new AppError(404, "User not found");
   }
+
+  await setCacheData(cacheKey, user);
   return user
 }
 
