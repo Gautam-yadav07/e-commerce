@@ -2,7 +2,7 @@
 import { redisClient } from "../config/redis.js";
 
 
-export const getCacheData = async (key: string) => {
+export const getCacheData = async <T>(key: string): Promise<T | null> => {
 
   try {
     const data = await redisClient.get(key)
@@ -14,6 +14,7 @@ export const getCacheData = async (key: string) => {
 
   } catch (error) {
     console.log("Error getting data from redis", error)
+    return null;
   }
 
 }
