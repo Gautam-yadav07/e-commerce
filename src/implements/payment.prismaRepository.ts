@@ -13,7 +13,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
         order_id: payment.order_id,
         user_id: payment.user_id,
         total_amount: Number(payment.total_amount),
-        payment_method: payment.payment_method,
+        payment_method: payment.PaymentMethod,
         transaction_id: payment.transaction_id,
         status: PaymentStatus,
         paid_at:paid_at,

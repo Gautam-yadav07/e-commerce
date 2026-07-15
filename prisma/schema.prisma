@@ -181,6 +181,7 @@ enum ProductStatus {
   ACTIVE
   INACTIVE
   AVAILABLE
+  UNAVAILABLE
 }
 
 enum UserRole {

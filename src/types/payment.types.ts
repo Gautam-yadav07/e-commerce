@@ -1,10 +1,10 @@
-import type { PaymentStatus } from "../generated/prisma/enums.js";
+import type { PaymentMethod, PaymentStatus } from "../generated/prisma/enums.js";
 
 export interface PaymentInput {
   order_id: number;
   user_id: number;
   total_amount: number;
-  payment_method: string;
+  payment_method: PaymentMethod;
   transaction_id: string;
   status: PaymentStatus;
   paid_at:Date
