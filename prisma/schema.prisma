@@ -166,7 +166,7 @@ enum ProductStatus {
 
 enum UserRole {
   CUSTOMER
-  SELLER
+  SUPPLIER
   ADMIN
 }
 
