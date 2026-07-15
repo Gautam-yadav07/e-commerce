@@ -1,5 +1,5 @@
 import type{ Request, Response,NextFunction } from 'express';
-import { generateAccessTokenService, getUserProfileService, userLoginService, userRegisterService} from '../services/auth.service.js';
+import { forgotPasswordService, generateAccessTokenService, getUserProfileService, logoutService, resetPasswordService, userLoginService, userRegisterService} from '../services/auth.service.js';
 import { handleSuccessResponse } from '../utils/handleSuccessResponse.js';
 import { handleErrorResponse } from '../utils/handleErrorResponse.js';
 
@@ -18,7 +18,6 @@ export const userRegisterController = async (req: Request, res: Response, next:N
    
   }
 };
-
 
 
 export const userLoginController = async(req:Request, res:Response, next:NextFunction)=>{
@@ -73,6 +72,62 @@ export const generateAccessTokenController = async (req: Request, res: Response,
     const token = await generateAccessTokenService(refreshToken);
 
     return handleSuccessResponse(res, 200, "Access token generated successfully", token);
+
+  } catch (error) {
+    next(error)
+  }
+}
+
+
+export const logoutController = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken) {
+      return handleErrorResponse(res,401, "Refresh token is required");
+    }
+
+    const logout = await logoutService(refreshToken);
+
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      sameSite: "strict",
+    });
+
+    return handleSuccessResponse(res, 200, "Logged out successfully",logout);
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const forgotPasswordController = async(req:Request, res:Response, next:NextFunction)=>{
+
+  try{
+
+    const {email}=req.body;
+
+    const data = await forgotPasswordService(email);
+    console.log(email)
+
+    return handleSuccessResponse(res, 200, "A password reset link has been sent.", data );
+
+  }catch(error){
+
+    next(error);
+
+  }
+
+}
+
+
+export const resetPasswordController = async(req:Request, res:Response, next:NextFunction)=>{
+  try {
+    const {password, token} = req.body;
+
+    const resetPassword = await resetPasswordService(token, password);
+
+    return handleSuccessResponse(res, 200, "Password Reset Successfully", resetPassword);
 
   } catch (error) {
     next(error)

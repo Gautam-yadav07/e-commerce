@@ -131,8 +131,8 @@ async updateProduct(id: number, product: UpdateProductInput): Promise<ProductRes
   }
 }
 
-  async updateProductStock(tx: Prisma.TransactionClient, id: number, newStock: number): Promise<void> {
-    const updatedStock = await tx.products.update({
+  async updateProductStock(id: number, newStock: number): Promise<void> {
+    const updatedStock = await prisma.products.update({
       where: { id },
       data: {
         stock: newStock,

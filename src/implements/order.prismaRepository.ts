@@ -49,7 +49,7 @@ export class PrismaOrderRepository implements OrderRepository{
 
     async createOrderItem(tx:Prisma.TransactionClient, item: OrderItemInput): Promise<OrderItemResponse> {
     
-        const created = await tx.orderItems.create({
+        const created = await tx.orderItems.create(tx,{
 
             data: {
                 order_id: item.order_id,

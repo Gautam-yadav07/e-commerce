@@ -8,5 +8,7 @@
 CREATE TYPE "Gender" AS ENUM ('MALE', 'FEMALE', 'OTHER');
 
 -- AlterTable
-ALTER TABLE "users" DROP COLUMN "gender",
+ALTER TABLE "users" ADD COLUMN     "reset_password_expiry" TIMESTAMP(3),
+ADD COLUMN     "reset_password_token" TEXT,
+DROP COLUMN "gender",
 ADD COLUMN     "gender" "Gender" NOT NULL;
