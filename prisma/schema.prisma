@@ -29,6 +29,7 @@ model User {
   cart       Carts?
   orders        Order[]
   orderItems    OrderItems[]    @relation("SellerOrderItems")
+  payments      Payment[]
 
   @@map("users")
 }
@@ -132,7 +133,8 @@ model Order {
   order_status   OrderStatus      @default(PENDING) 
   created_at     DateTime    @default(now())
   updated_at     DateTime    @default(now()) @updatedAt
-    orderItems    OrderItems[]
+  orderItems    OrderItems[]
+  payment       Payment
 
   @@map("orders")
 }
@@ -155,6 +157,22 @@ model OrderItems {
   @@map("order_items")
 }
 
+model Payment {
+  id            Int   @id @default(autoincrement())
+  order_id      Int   @unique
+  order         Order @relation(fields:[order_id], references:[id])
+  user_id       Int
+  user          User  @relation(fields:[user_id], references:[id], onDelete:Restrict)
+  total_amount    Decimal   @db.Decimal(10,2)
+  payment_method  PaymentMethod
+  transaction_id  String?   @unique
+  status        PaymentStatus
+  paid_at       DateTime 
+  created_at    DateTime @default(now())
+
+  @@map("payments")
+}
+
 enum ProductStatus {
   ACTIVE
   INACTIVE
@@ -175,6 +193,7 @@ enum Gender {
 }
 enum PaymentStatus {
   PENDING
+  SUCCESS
   PROCESSING
   PAID
   FAILED
@@ -190,4 +209,12 @@ enum OrderStatus {
   DELIVERED
   CANCELLED
   RETURNED
+}
+
+enum PaymentMethod {
+  UPI
+  DEBITCARD
+  CREDITCARD
+  CASHONDELEVERY
+  BANKTRANSFER
 }

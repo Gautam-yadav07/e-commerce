@@ -104,7 +104,7 @@ export const checkoutService = async (
  
     const newStock = product.stock - item.quantity;
 
-    await productRepository.updateProductStock(product.id, newStock);
+    await productRepository.updateProductStock(tx,product.id, newStock);
   }
 
     const newOrder = await orderRepository.createOrder(tx,{
@@ -132,7 +132,7 @@ export const checkoutService = async (
   }
 
 
-  // await cartRepository.clearCart(cart.id);
+   await cartRepository.clearCart(tx,cart.id);
 
     return {
       order: newOrder,
