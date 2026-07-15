@@ -6,7 +6,7 @@ export interface PaymentInput {
   total_amount: number;
   payment_method: PaymentMethod;
   transaction_id: string;
-  status: PaymentStatus;
+  payment_status: PaymentStatus;
   paid_at:Date
 }
 
@@ -17,7 +17,7 @@ export interface PaymentResponse {
   total_amount: number;
   payment_method: string;
   transaction_id: string;
-  status: PaymentStatus;
+  payment_status: PaymentStatus;
   paid_at: Date | null;
   created_at: Date;
 }
