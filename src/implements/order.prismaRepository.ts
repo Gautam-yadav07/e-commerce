@@ -49,7 +49,7 @@ export class PrismaOrderRepository implements OrderRepository{
 
     async createOrderItem(tx:Prisma.TransactionClient, item: OrderItemInput): Promise<OrderItemResponse> {
     
-        const created = await tx.orderItems.create(tx,{
+        const created = await tx.orderItems.create({
 
             data: {
                 order_id: item.order_id,
@@ -165,29 +165,29 @@ export class PrismaOrderRepository implements OrderRepository{
     }
 
   async findOrderItemById(itemId: number): Promise<OrderItemResponse | null> {
-        const oi = await prisma.orderItems.findUnique({
+        const orderItem = await prisma.orderItems.findUnique({
             where: { id: itemId },
         });
 
-        if (!oi) return null;
+        if (!orderItem) return null;
 
         return {
-            id: oi.id,
-            order_id: oi.order_id || 0,
-            product_id: oi.product_id || 0,
-            seller_id: oi.seller_id || 0,
-            quantity: oi.quantity,
-            price: Number(oi.price),
-            subtotal: Number(oi.subtotal),
-            order_status: oi.order_status,
-            created_at: oi.created_at,
-            updated_at: oi.updated_at,
+            id: orderItem.id,
+            order_id: orderItem.order_id || 0,
+            product_id: orderItem.product_id || 0,
+            seller_id: orderItem.seller_id || 0,
+            quantity: orderItem.quantity,
+            price: Number(orderItem),
+            subtotal: Number(orderItem.subtotal),
+            order_status: orderItem.order_status,
+            created_at: orderItem.created_at,
+            updated_at: orderItem.updated_at,
         };
     }
 
-    async updateOrderStatus(orderId: number, status: OrderStatus): Promise<void> {
+    async updateOrderStatus(tx:Prisma.TransactionClient, orderId: number, status: OrderStatus): Promise<void> {
     
-        const orderStatus = await prisma.order.update({
+        const orderStatus = await tx.order.update({
             where: { id: orderId },
             data: {
                 order_status: status,
@@ -196,7 +196,7 @@ export class PrismaOrderRepository implements OrderRepository{
         });
     }
 
-    async updateOrderPaymentStatus(orderId: number, status: PaymentStatus): Promise<void> {
+    async updateOrderPaymentStatus(tx:Prisma.TransactionClient, orderId: number, status: PaymentStatus): Promise<void> {
         const paymentStatus = await prisma.order.update({
             where: { id: orderId },
             data: {
@@ -206,8 +206,8 @@ export class PrismaOrderRepository implements OrderRepository{
         });
     }
 
-    async updateOrderItemStatus(itemId: number, status: OrderStatus): Promise<void> {
-        const updatedStauts = await prisma.orderItems.update({
+    async updateOrderItemStatus(tx:Prisma.TransactionClient, itemId: number, status: OrderStatus): Promise<void> {
+        const updatedStauts = await tx.orderItems.update({
             where: { id: itemId },
             data: {
                 order_status: status,

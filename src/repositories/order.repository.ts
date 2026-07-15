@@ -16,11 +16,11 @@ export interface OrderRepository{
 
     findOrderItemById(itemId: number): Promise<OrderItemResponse | null>;
 
-    updateOrderStatus(orderId: number, status: string,): Promise<void>;
+    updateOrderStatus(tx:Prisma.TransactionClient, orderId: number, status: string,): Promise<void>;
 
-    updateOrderPaymentStatus(orderId: number, status: string): Promise<void>;
+    updateOrderPaymentStatus(tx:Prisma.TransactionClient ,orderId: number, status: string): Promise<void>;
     
-    updateOrderItemStatus(itemId: number, status: string): Promise<void>;
+    updateOrderItemStatus(tx:Prisma.TransactionClient, itemId: number, status: string): Promise<void>;
 }
 
 

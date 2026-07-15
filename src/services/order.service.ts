@@ -3,7 +3,7 @@ import { AddressRepositoryFactory } from "../factories/address.repository.factor
 import { CartRepositoryFactory } from "../factories/cart.repository.factory.js";
 import { OrderRepositoryFactory } from "../factories/order.repository.factory.js";
 import { ProductRepositoryFactory } from "../factories/product.repository.factory.js";
-import { OrderStatus } from "../generated/prisma/enums.js";
+import { OrderStatus, ProductStatus } from "../generated/prisma/enums.js";
 import type { OrderResponse, OrderItemResponse } from "../types/order.types.js";
 import { AppError } from "../utils/appError.js";
 
@@ -64,7 +64,7 @@ export const checkoutService = async (
       );
     }
 
-    if (product.status !== "ACTIVE") {
+    if (product.status !== ProductStatus.ACTIVE) {
       throw new AppError(
         400,
         `Product "${item.product_name}" is currently inactive.`
@@ -127,7 +127,7 @@ export const checkoutService = async (
         quantity: item.quantity,
         price: item.price,
         subtotal: item.subtotal,
-        order_status:"PENDING"
+        order_status:OrderStatus.PENDING
       });
   }
 
@@ -192,7 +192,8 @@ export const updateOrderItemStatusService = async (
     );
   }
 
-  await orderRepository.updateOrderItemStatus(orderItemId, status);
+  return await prisma.$transaction(async(tx)=>{
+    await orderRepository.updateOrderItemStatus(tx,orderItemId, status);
 
   const siblingItems = await orderRepository.findOrderItemsByOrderId(
     item.order_id
@@ -228,7 +229,9 @@ export const updateOrderItemStatusService = async (
   }
 
   await orderRepository.updateOrderStatus(
+    tx,
     item.order_id,
     newOrderStatus
   );
+  })
 };
