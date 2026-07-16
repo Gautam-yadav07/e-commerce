@@ -26,12 +26,10 @@ export const processPaymentService = async (data:PaymentInput): Promise<PaymentR
     throw new AppError(400, 'This order has already been paid.');
   }
 
-  
+  const paymentInput = {total_amount:order.total_amount, ...data}
   return await prisma.$transaction(async(tx)=>{
 
-
-    
-    const payment = await paymentRepository.createPayment(tx, data);
+    const payment = await paymentRepository.createPayment(tx, paymentInput);
 
     if (data.payment_status === PaymentStatus.PAID) {
       await orderRepository.updateOrderPaymentStatus(tx,data.order_id, PaymentStatus.PAID,);

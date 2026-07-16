@@ -5,8 +5,6 @@ import type { PaymentInput, PaymentResponse } from "../types/payment.types.js";
 
 export class PrismaPaymentRepository implements PaymentRepository {
   async createPayment(tx:Prisma.TransactionClient, payment: PaymentInput): Promise<PaymentResponse> {
-    
-    const paid_at = payment.payment_status === PaymentStatus.PAID ? new Date() : null;
 
     const created = await tx.payment.create({
       data: {

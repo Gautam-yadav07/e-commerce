@@ -16,7 +16,7 @@ export const processPaymentController = async (
     const data = {user_id, paid_at:new Date(), ...req.body}
     const payment = await processPaymentService(data);
 
-    handleSuccessResponse(res, 201, `${payment.payment_status ==='PAID'} ? "Payment processed successfully: "Payment Failed"`, payment)
+    handleSuccessResponse(res, 201, `${payment.payment_status ==='PAID'} ? Payment processed successfully: Payment Failed`, payment)
 
   } catch (error) {
     next(error);
