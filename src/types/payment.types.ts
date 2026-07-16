@@ -21,3 +21,12 @@ export interface PaymentResponse {
   paid_at: Date | null;
   created_at: Date;
 }
+
+export interface UserPaymentInput {
+  order_id: number;
+  user_id: number;
+  payment_method: PaymentMethod;
+  transaction_id: string;
+  payment_status: PaymentStatus;
+  paid_at:Date
+}

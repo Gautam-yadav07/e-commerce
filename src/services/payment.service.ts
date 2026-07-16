@@ -2,7 +2,7 @@ import prisma from "../config/prisma.js";
 import { OrderRepositoryFactory } from "../factories/order.repository.factory.js";
 import { PaymentRepositoryFactory } from "../factories/payment.repository.factory.js";
 import { OrderStatus, PaymentStatus } from "../generated/prisma/enums.js";
-import type { PaymentInput, PaymentResponse } from "../types/payment.types.js";
+import type { PaymentInput, PaymentResponse, UserPaymentInput } from "../types/payment.types.js";
 import { AppError } from "../utils/appError.js";
 
 
@@ -11,7 +11,7 @@ import { AppError } from "../utils/appError.js";
   const paymentRepository = PaymentRepositoryFactory.create()
 
 
-export const processPaymentService = async (data:PaymentInput): Promise<PaymentResponse> => {
+export const processPaymentService = async (data:UserPaymentInput): Promise<PaymentResponse> => {
 
   const order = await orderRepository.findOrderById(data.order_id);
   if (!order) {
@@ -26,7 +26,7 @@ export const processPaymentService = async (data:PaymentInput): Promise<PaymentR
     throw new AppError(400, 'This order has already been paid.');
   }
 
-  const paymentInput = {total_amount:order.total_amount, ...data}
+  const paymentInput = { ...data, total_amount:order.total_amount}
   return await prisma.$transaction(async(tx)=>{
 
     const payment = await paymentRepository.createPayment(tx, paymentInput);
