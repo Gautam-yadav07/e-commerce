@@ -1,0 +1,36 @@
+services:
+  rabbitmq:
+        image: rabbitmq:4-management
+        container_name: rabbitmq-container
+        ports:
+          - "5672:5672"
+          - "15672:15672"
+        networks:
+          - my-network
+  redis:
+        image: redis
+        container_name: redis-container
+        ports:
+          - "6379:6379"
+        networks:
+          - my-network
+  app:  
+        build: .
+        container_name: e-commerce-container 
+        restart: always
+        depends_on:
+          - redis
+          - rabbitmq
+        ports:
+          - "5000:5000"
+        environment: 
+          - PORT=5000
+          - RABBITMQ_URL=amqp://rabbitmq-container:5672
+          - REDIS_URL=redis://redis-container:6379
+        networks:
+          - my-network
+                
+networks:
+  my-network:
+    driver: bridge             
+
