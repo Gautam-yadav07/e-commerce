@@ -23,5 +23,17 @@ export const RATE_LIMIT = {
     windowInSeconds: 600,
   },
 
+  orders:{
+    prefix: "orders",
+    capacity: 5,
+    refillRate: 1,
+    refillInterval: 10,
+  },
 
+  payments:{
+    prefix: "payments",
+    capacity: 3,
+    refillRate: 1,
+    refillInterval: 60,
+  }
 };
