@@ -47,6 +47,7 @@ export interface CreateRazorpayOrderResponse {
   razorpay_order_id: string;
   amount: number;
   currency: string;
+  key_id: string;
   order_id: number;
 }
 
@@ -55,6 +56,6 @@ export interface VerifyPayment {
   user_id: number,
   razorpay_order_id: string,
   razorpay_payment_id: string,
-  razorpaySignature: string,
+  razorpay_signature: string,
   order_id: number
 }
