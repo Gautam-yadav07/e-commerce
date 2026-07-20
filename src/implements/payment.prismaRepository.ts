@@ -28,6 +28,8 @@ export class PrismaPaymentRepository implements PaymentRepository {
       payment_status: created.status,
       paid_at: created.paid_at,
       created_at: created.created_at,
+      razorpay_order_id:created.razorpay_order_id ||'',
+      razorpay_payment_id:created.razorpay_payment_id ||''
     };
   }
 
@@ -48,6 +50,30 @@ export class PrismaPaymentRepository implements PaymentRepository {
       payment_status: payment.status,
       paid_at: payment.paid_at,
       created_at: payment.created_at,
+      razorpay_order_id:payment.razorpay_order_id ||'',
+      razorpay_payment_id:payment.razorpay_payment_id ||''
     };
+  }
+  async findPaymentByRazorpayOrderId(razorPayOrderId: string): Promise<PaymentResponse | null> {
+    const payment  = await prisma.payment.findUnique({
+      where:{razorpay_order_id:razorPayOrderId}
+    })
+    if(!payment){
+      return null
+    }
+
+    return {
+      id: payment.id,
+      order_id: payment.order_id,
+      user_id: payment.user_id || 0,
+      total_amount: Number(payment.total_amount),
+      payment_method: payment.payment_method,
+      transaction_id: payment.transaction_id || '',
+      payment_status: payment.status,
+      paid_at: payment.paid_at,
+      created_at: payment.created_at,
+      razorpay_order_id:payment.razorpay_order_id ||'',
+      razorpay_payment_id:payment.razorpay_payment_id ||''
+    }
   }
 }

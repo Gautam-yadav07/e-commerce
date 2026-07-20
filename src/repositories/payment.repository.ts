@@ -5,4 +5,6 @@ export interface PaymentRepository {
   createPayment(tx:Prisma.TransactionClient, payment: PaymentInput): Promise<PaymentResponse>;
   
   findPaymentByOrderId(orderId: number): Promise<PaymentResponse | null>;
+
+  findPaymentByRazorpayOrderId(razorPayOrderId:string):Promise<PaymentResponse | null>;
 }
