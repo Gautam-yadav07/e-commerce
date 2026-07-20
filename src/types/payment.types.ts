@@ -5,11 +5,11 @@ export interface PaymentInput {
   user_id: number;
   total_amount: number;
   payment_method: PaymentMethod;
-  transaction_id: string;
+  // transaction_id: string;
   payment_status: PaymentStatus;
-  paid_at: Date;
+  // paid_at: Date;
   razorpay_order_id: string | null
-  razorpay_payment_id: string | null
+  // razorpay_payment_id: string | null
 }
 
 export interface PaymentResponse {
@@ -44,7 +44,17 @@ export interface CreateRazorpayOrderInput {
 }
 
 export interface CreateRazorpayOrderResponse {
-  razorpay_order_id: number;
+  razorpay_order_id: string;
   amount: number;
   currency: string;
+  order_id: number;
+}
+
+
+export interface VerifyPayment {
+  user_id: number,
+  razorpay_order_id: string,
+  razorpay_payment_id: string,
+  razorpaySignature: string,
+  order_id: number
 }

@@ -7,4 +7,11 @@ export interface PaymentRepository {
   findPaymentByOrderId(orderId: number): Promise<PaymentResponse | null>;
 
   findPaymentByRazorpayOrderId(razorPayOrderId:string):Promise<PaymentResponse | null>;
+  updatePaymentStatus(
+    tx:Prisma.TransactionClient,
+    paymentId: number,
+    status: string,
+    razorpayPaymentId?: string | null,
+
+  ): Promise<PaymentResponse>;
 }
