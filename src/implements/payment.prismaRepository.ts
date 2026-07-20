@@ -14,6 +14,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
         payment_method: payment.payment_method,
         // transaction_id: payment.transaction_id,
         status: payment.payment_status,
+        razorpay_order_id: payment.razorpay_order_id,
         // paid_at:payment.paid_at,
       },
     });
@@ -74,6 +75,37 @@ export class PrismaPaymentRepository implements PaymentRepository {
       created_at: payment.created_at,
       razorpay_order_id:payment.razorpay_order_id ||'',
       razorpay_payment_id:payment.razorpay_payment_id ||''
+    }
+  }
+  async updatePaymentStatus(
+    tx:Prisma.TransactionClient,
+    paymentId: number,
+    status: PaymentStatus,
+    razorpayPaymentId?: string | null,
+  ): Promise<PaymentResponse> {
+    const paid_at = status === PaymentStatus.PAID ? new Date() : null;
+
+    const updated = await tx.payment.update({
+      where: { id: paymentId },
+      data: {
+        status,
+        paid_at,
+        razorpay_payment_id:razorpayPaymentId ?? null
+        },
+    });
+
+    return {
+      id: updated.id,
+      order_id: updated.order_id,
+      user_id: updated.user_id || 0,
+      total_amount: Number(updated.total_amount),
+      payment_method: updated.payment_method,
+      transaction_id: updated.transaction_id || '',
+      payment_status: updated.status,
+      paid_at: updated.paid_at,
+      created_at: updated.created_at,
+      razorpay_order_id:updated.razorpay_order_id ||'',
+      razorpay_payment_id:updated.razorpay_payment_id ||''
     }
   }
 }
