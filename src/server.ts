@@ -11,7 +11,11 @@ await startEmailWorker();
 await connectRedis()
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, ()=>{
+app.use("/", (req, res) => {
+  res.status(200).send(`Response from ${PORT}`);
+})
+
+app.listen(PORT, () => {
   console.log(`Server is running on ${PORT}`)
 })
 
