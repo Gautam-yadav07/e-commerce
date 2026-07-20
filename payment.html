@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Razorpay Test Payment</title>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+            background:#f5f5f5;
+        }
+
+        button{
+            padding:15px 35px;
+            font-size:18px;
+            border:none;
+            border-radius:8px;
+            background:#3399cc;
+            color:white;
+            cursor:pointer;
+        }
+
+        button:hover{
+            background:#287aa3;
+        }
+    </style>
+</head>
+<body>
+
+<button id="payBtn">
+    Pay ₹1950
+</button>
+
+<script>
+
+document.getElementById("payBtn").onclick = function(){
+
+    const options = {
+
+        key: "rzp_test_TEFzZE7lEafUju",
+
+        amount: 195000,
+
+        currency: "INR",
+
+        order_id: "order_TFqyzoKyNhCoON",
+
+        handler: function (response){
+
+            alert("Payment Success");
+
+            console.log(response);
+
+            fetch("http://localhost:5000/api/payments/verify", {
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json",
+                    "Authorization":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJnYXV0YW0udnlhbndlYnNAZ21haWwuY29tIiwicm9sZSI6IkNVU1RPTUVSIiwiaWF0IjoxNzg0NTcxODg3LCJleHAiOjE3ODQ1NzI3ODd9.QuKA2XORuNXb77vXjHLwoOqPRjTy_9OkCkhfer1-lkI"
+                },
+                body:JSON.stringify({
+
+                    order_id:1,
+
+                    razorpay_order_id:response.razorpay_order_id,
+
+                    razorpay_payment_id:response.razorpay_payment_id,
+
+                    razorpaySignature:response.razorpay_signature
+
+                })
+
+            })
+            .then(res=>res.json())
+            .then(data=>{
+                console.log(data);
+                alert("Payment Verified Successfully");
+            })
+            .catch(err=>{
+                console.log(err);
+            });
+
+        },
+
+        theme:{
+            color:"#3399cc"
+        }
+
+    };
+    const rzp = new Razorpay(options);
+
+    rzp.open();
+
+};
+
+</script>
+
+</body>
+</html>
