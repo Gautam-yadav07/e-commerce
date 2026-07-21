@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Razorpay Test Payment</title>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #f5f5f5;
+        }
+
+        button {
+            padding: 15px 35px;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            background: #3399cc;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #287aa3;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Razorpay Payment</h1>
+
+    <button id="payBtn">
+        Payment
+    </button>
+
+    <script>
+
+        const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJnYXV0YW0udnlhbndlYnNAZ21haWwuY29tIiwicm9sZSI6IkNVU1RPTUVSIiwiaWF0IjoxNzg0NjM5ODIwLCJleHAiOjE3ODQ2NDA3MjB9.XYYb_nl_7VA5UKT0vR0F9RXcnG-8RfEGAmp4fkcGGtY"
+
+        const createOrder = async () => {
+            try {
+                const response = await fetch("http://localhost:5000/api/v1/payments/order", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${TOKEN}`
+                    },
+                    body: JSON.stringify({ order_id: 9 })
+                })
+
+                if (!response.ok) {
+                    throw new Error("Order creation failed")
+                }
+                const orderData = await response.json();
+                // console.log("Order creation data", orderData.data)
+
+                return orderData.data
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        const verifyPayment = async (paymentResponse, orderId) => {
+            try {
+                const response = await fetch("http://localhost:5000/api/v1/payments/verify", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": 'application/json',
+                        "Authorization": `Bearer ${TOKEN}`
+                    },
+                    body: JSON.stringify({
+                        order_id: orderId,
+                        razorpay_order_id: paymentResponse.razorpay_order_id,
+                        razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                        razorpay_signature: paymentResponse.razorpay_signature
+                    })
+
+                })
+                const data = await response.json()
+                console.log("Verification Response", data);
+                alert("Verification Successful");
+
+            } catch (error) {
+                console.log("Payment Verification failed", error)
+                alert("Payment Verification failed")
+            }
+        }
+
+
+
+        document.getElementById("payBtn").onclick = async () => {
+
+            const razorpayOrder = await createOrder();
+
+            if (!razorpayOrder) {
+                console.log("Razor pay order not found")
+                alert("Razorpay order not found")
+                return;
+            }
+
+            const options = {
+                key: "rzp_test_TEFzZE7lEafUju",
+                amount: razorpayOrder.amount,
+                currency: razorpayOrder.currency || "INR",
+                order_id: razorpayOrder.razorpay_order_id,
+                handler: async function (response) {
+                    alert("Payment Success from razorpay")
+                    console.log("Razorpay Response:", response);
+
+
+                    await verifyPayment(response, razorpayOrder.order_id)
+                    console.log("rzp res", response, "orderid", razorpayOrder.order_id)
+
+
+                }
+            }
+            console.log("Options value", options)
+
+            const razorpay = new Razorpay(options)
+            razorpay.open();
+        }
+
+    </script>
+
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 
+
+
+document.getElementById("payBtn").onclick = function(){
+
+const options = {
+
+key: "rzp_test_TEFzZE7lEafUju",
+
+amount: 13999,
+
+currency: "INR",
+
+order_id: "order_TG22JCwv58gVvc",
+
+handler: function (response){
+
+alert("Payment Success");
+
+console.log(response);
+
+fetch("http://localhost:5000/api/v1/payments/verify", {
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+"Authorization":TOKEN
+},
+body:JSON.stringify({
+
+order_id:3,
+
+razorpay_order_id:response.razorpay_order_id,
+
+razorpay_payment_id:response.razorpay_payment_id,
+
+razorpay_signature:response.razorpay_signature
+
+})
+
+})
+.then(res=>res.json())
+.then(data=>{
+console.log(data);
+alert("Payment Verified Successfully");
+})
+.catch(err=>{
+console.log(err);
+});
+
+},
+
+};
+const rzp = new Razorpay(options);
+
+rzp.open();
+
+}; -->
