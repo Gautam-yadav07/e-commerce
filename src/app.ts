@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors'
 import authRoutes from './routes/auth.route.js'
 import { errorHandler } from './middlewares/error.middleware.js';
 import cookieParser from 'cookie-parser'
@@ -18,6 +19,7 @@ app.use(cookieParser())
 app.use("/health", (req, res)=>{
     res.status(200).send("OK");
 })
+app.use(cors())
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/sellers", sellerRoutes)
