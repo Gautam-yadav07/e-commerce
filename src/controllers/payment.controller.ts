@@ -4,6 +4,7 @@ import {
   getPaymentDetailsService,
   createRazorPayOrderService,
   verifyPaymentService,
+  paymentWebhookService,
 } from "../services/payment.service.js";
 import { handleSuccessResponse } from "../utils/handleSuccessResponse.js";
 
@@ -13,15 +14,15 @@ export const processPaymentController = async (
   next: NextFunction
 ) => {
   try {
-     const user_id =  req.user.id
+    const user_id = req.user.id
 
-    const data = {user_id, paid_at:new Date(), ...req.body}
+    const data = { user_id, paid_at: new Date(), ...req.body }
     const payment = await processPaymentService(data);
 
-    handleSuccessResponse(res, 201,  
+    handleSuccessResponse(res, 201,
       payment.payment_status === "PAID"
-    ? "Payment processed successfully"
-    : "Payment failed", payment)
+        ? "Payment processed successfully"
+        : "Payment failed", payment)
 
   } catch (error) {
     next(error);
@@ -64,7 +65,7 @@ export const verifyPaymentController = async (req: Request, res: Response, next:
   try {
     const userId = req.user!.id;
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, order_id } = req.body;
-    const data = {...req.body}
+    const data = { ...req.body }
 
     const payment = await verifyPaymentService(data);
 
@@ -72,5 +73,29 @@ export const verifyPaymentController = async (req: Request, res: Response, next:
 
   } catch (error) {
     next(error);
+  }
+};
+
+
+export const paymentWebhookController = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const signature = req.headers['x-razorpay-signature'] as string;
+
+    if (!signature) {
+      res.status(400).json({
+        status: false,
+        message: 'Missing x-razorpay-signature header.',
+      });
+      return;
+    }
+
+    const rawBody = req.body instanceof Buffer ? req.body: JSON.stringify(req.body);
+
+    await paymentWebhookService(rawBody, signature);
+
+    res.status(200).json({ status: 'ok' });
+  } catch (error) {
+    console.error('Webhook processing error:', error);
+    res.status(200).json({ status: 'ok' });
   }
 };
