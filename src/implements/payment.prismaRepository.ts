@@ -4,7 +4,7 @@ import type { PaymentRepository } from "../repositories/payment.repository.js";
 import type { PaymentInput, PaymentResponse } from "../types/payment.types.js";
 
 export class PrismaPaymentRepository implements PaymentRepository {
-  async createPayment(tx:Prisma.TransactionClient, payment: PaymentInput): Promise<PaymentResponse> {
+  async createPayment(tx: Prisma.TransactionClient, payment: PaymentInput): Promise<PaymentResponse> {
 
     const created = await tx.payment.create({
       data: {
@@ -29,14 +29,14 @@ export class PrismaPaymentRepository implements PaymentRepository {
       payment_status: created.status,
       paid_at: created.paid_at,
       created_at: created.created_at,
-      razorpay_order_id:created.razorpay_order_id ||'',
-      razorpay_payment_id:created.razorpay_payment_id ||''
+      razorpay_order_id: created.razorpay_order_id || '',
+      razorpay_payment_id: created.razorpay_payment_id || ''
     };
   }
 
   async findPaymentByOrderId(orderId: number): Promise<PaymentResponse | null> {
     const payment = await prisma.payment.findUnique({
-      where: { order_id:orderId },
+      where: { order_id: orderId },
     });
 
     if (!payment) return null;
@@ -51,15 +51,15 @@ export class PrismaPaymentRepository implements PaymentRepository {
       payment_status: payment.status,
       paid_at: payment.paid_at,
       created_at: payment.created_at,
-      razorpay_order_id:payment.razorpay_order_id ||'',
-      razorpay_payment_id:payment.razorpay_payment_id ||''
+      razorpay_order_id: payment.razorpay_order_id || '',
+      razorpay_payment_id: payment.razorpay_payment_id || ''
     };
   }
   async findPaymentByRazorpayOrderId(razorPayOrderId: string): Promise<PaymentResponse | null> {
-    const payment  = await prisma.payment.findUnique({
-      where:{razorpay_order_id:razorPayOrderId}
+    const payment = await prisma.payment.findUnique({
+      where: { razorpay_order_id: razorPayOrderId }
     })
-    if(!payment){
+    if (!payment) {
       return null
     }
 
@@ -73,12 +73,12 @@ export class PrismaPaymentRepository implements PaymentRepository {
       payment_status: payment.status,
       paid_at: payment.paid_at,
       created_at: payment.created_at,
-      razorpay_order_id:payment.razorpay_order_id ||'',
-      razorpay_payment_id:payment.razorpay_payment_id ||''
+      razorpay_order_id: payment.razorpay_order_id || '',
+      razorpay_payment_id: payment.razorpay_payment_id || ''
     }
   }
   async updatePaymentStatus(
-    tx:Prisma.TransactionClient,
+    tx: Prisma.TransactionClient,
     paymentId: number,
     status: PaymentStatus,
     razorpayPaymentId?: string | null,
@@ -88,10 +88,10 @@ export class PrismaPaymentRepository implements PaymentRepository {
     const updated = await tx.payment.update({
       where: { id: paymentId },
       data: {
-        status,
+        status: status,
         paid_at,
-        razorpay_payment_id:razorpayPaymentId ?? null
-        },
+        razorpay_payment_id: razorpayPaymentId ?? null
+      }
     });
 
     return {
@@ -104,8 +104,8 @@ export class PrismaPaymentRepository implements PaymentRepository {
       payment_status: updated.status,
       paid_at: updated.paid_at,
       created_at: updated.created_at,
-      razorpay_order_id:updated.razorpay_order_id ||'',
-      razorpay_payment_id:updated.razorpay_payment_id ||''
+      razorpay_order_id: updated.razorpay_order_id || '',
+      razorpay_payment_id: updated.razorpay_payment_id || ''
     }
   }
 }

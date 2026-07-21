@@ -90,7 +90,7 @@ export class PrismaOrderRepository implements OrderRepository{
             id: order.id,
             user_id: order.user_id,
             address_id: order.address_id,
-            total_amount: Number(order),
+            total_amount: Number(order.total_amount),
             payment_status: order.payment_status,
             order_status: order.order_status,
             created_at: order.created_at,
