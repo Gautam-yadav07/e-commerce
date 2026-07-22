@@ -122,7 +122,8 @@ model CartItems {
 
 model Order {
   id            Int         @id @default(autoincrement())
-  user_id        Int       
+  user_id        Int
+  idempotency_key String?   @unique       
   user          User        @relation(fields: [user_id], references: [id], onDelete: Restrict)
   address_id    Int?       
   address       Addresses?    @relation(fields: [address_id], references: [id], onDelete: SetNull)
