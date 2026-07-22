@@ -68,8 +68,25 @@ export const getPaymentDetailsService = async (userId: number, orderId: number):
 
 export const createRazorPayOrderService = async (
   user_id: number,
-  order_id: number
+  order_id: number,
+  idempotency_key: string
 ): Promise<CreateRazorpayOrderResponse> => {
+
+  if (idempotency_key) {
+    const existingPayment = await paymentRepository.findPaymentByIdempotencyKey(idempotency_key);
+    console.log(idempotency_key)
+    console.log(existingPayment)
+
+    if (existingPayment && existingPayment.razorpay_order_id) {
+      return {
+        razorpay_order_id: existingPayment.razorpay_order_id,
+        amount: Number(existingPayment.total_amount),
+        currency: "INR",
+        key_id: process.env.RAZORPAY_API_KEY || "",
+        order_id: existingPayment.order_id,
+      };
+    }
+  }
 
   const order = await orderRepository.findOrderById(order_id);
 
@@ -95,7 +112,7 @@ export const createRazorPayOrderService = async (
   ) {
     return {
       razorpay_order_id: existingPayment.razorpay_order_id,
-      amount: Number(existingPayment.total_amount) * 100,
+      amount: Number(existingPayment.total_amount),
       currency: "INR",
       key_id: process.env.RAZORPAY_API_KEY || "",
       order_id: existingPayment.order_id,
@@ -115,18 +132,19 @@ export const createRazorPayOrderService = async (
   });
 
   return await prisma.$transaction(async (tx) => {
-    await paymentRepository.createPayment(tx, {
+    const newPayment = await paymentRepository.createPayment(tx, {
       order_id,
       user_id,
       total_amount: Number(order.total_amount),
       payment_method: PaymentMethod.UPI,
       payment_status: PaymentStatus.PENDING,
       razorpay_order_id: razorpayOrder.id,
+      idempotency_key: idempotency_key
     });
 
     return {
       razorpay_order_id: razorpayOrder.id,
-      amount: amountInPaise,
+      amount: newPayment.total_amount,
       currency: "INR",
       key_id: process.env.RAZORPAY_API_KEY || "",
       order_id,
@@ -167,7 +185,7 @@ export const verifyPaymentService = async (data: VerifyPayment): Promise<Payment
       data.razorpay_payment_id,
     );
 
-    console.log("Updated payment",updatedPayment)
+    console.log("Updated payment", updatedPayment)
 
     await orderRepository.updateOrderPaymentStatus(tx, data.order_id, PaymentStatus.PAID);
     await orderRepository.updateOrderStatus(tx, data.order_id, OrderStatus.PROCESSING);
@@ -178,7 +196,7 @@ export const verifyPaymentService = async (data: VerifyPayment): Promise<Payment
 }
 
 
-export const paymentWebhookService = async (rawbody: Buffer |string,
+export const paymentWebhookService = async (rawbody: Buffer | string,
   signature: string): Promise<void> => {
 
   const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;

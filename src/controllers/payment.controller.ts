@@ -52,8 +52,9 @@ export const createRazorpayOrderController = async (req: Request, res: Response,
   try {
     const user_id = req.user!.id;
     const { order_id } = req.body;
-
-    const razorpayOrderData = await createRazorPayOrderService(user_id, order_id);
+    const idempotency_key = req.headers['x-idempotency-key'] as string;
+    
+    const razorpayOrderData = await createRazorPayOrderService(user_id, order_id, idempotency_key);
 
     handleSuccessResponse(res, 201, "Razorpay order created successfully", razorpayOrderData)
   } catch (error) {
@@ -65,7 +66,7 @@ export const verifyPaymentController = async (req: Request, res: Response, next:
   try {
     const userId = req.user!.id;
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, order_id } = req.body;
-    const data = { ...req.body }
+    const data = { ...req.body, user_id:userId}
 
     const payment = await verifyPaymentService(data);
 
