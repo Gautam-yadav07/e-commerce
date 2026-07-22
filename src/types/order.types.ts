@@ -9,6 +9,7 @@ export interface OrderInput {
   state: string | null;
   country: string | null;
   pin_code: string | null;
+  idempotency_key: string
 }
 
 export interface OrderItemInput {
@@ -18,7 +19,7 @@ export interface OrderItemInput {
   quantity: number;
   price: number;
   subtotal: number;
-  order_status:OrderStatus
+  order_status: OrderStatus
 }
 
 export interface OrderResponse {

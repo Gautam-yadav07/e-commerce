@@ -23,6 +23,7 @@ export class PrismaOrderRepository implements OrderRepository{
                 state: order.state,
                 country: order.country,
                 pin_code: order.pin_code,
+                idempotency_key:order.idempotency_key
             },
             include:{
                 address:true
@@ -44,6 +45,7 @@ export class PrismaOrderRepository implements OrderRepository{
             state: createdOrder.state,
             country: createdOrder.country,
             pin_code: createdOrder.pin_code,
+            
         };
   }
 
@@ -214,5 +216,28 @@ export class PrismaOrderRepository implements OrderRepository{
                 updated_at: new Date(),
             },
         });
+    }
+
+    async findOrderByIdempotencyKey(idempotency_key: string): Promise<OrderResponse | null> {
+        const order = await prisma.order.findUnique({
+            where:{idempotency_key}
+        })
+        if(!order) return null;
+
+        return {
+            id: order.id,
+            user_id: order.user_id,
+            address_id: order.address_id,
+            total_amount: Number(order.total_amount),
+            payment_status: order.payment_status,
+            order_status: order.order_status,
+            created_at: order.created_at,
+            updated_at: order.updated_at,
+            address_line: order.address_line,
+            city: order.city,
+            state: order.state,
+            country: order.country,
+            pin_code: order.pin_code,
+        }
     }
 }

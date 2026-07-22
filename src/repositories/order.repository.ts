@@ -21,6 +21,9 @@ export interface OrderRepository{
     updateOrderPaymentStatus(tx:Prisma.TransactionClient ,orderId: number, status: string): Promise<void>;
     
     updateOrderItemStatus(tx:Prisma.TransactionClient, itemId: number, status: string): Promise<void>;
+
+    findOrderByIdempotencyKey(idempotency_key:string):Promise<OrderResponse|null>;
+
 }
 
 
