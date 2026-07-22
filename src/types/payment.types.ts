@@ -10,6 +10,7 @@ export interface PaymentInput {
   // paid_at: Date;
   razorpay_order_id: string | null
   // razorpay_payment_id: string | null
+  idempotency_key:string |null
 }
 
 export interface PaymentResponse {
@@ -23,7 +24,8 @@ export interface PaymentResponse {
   paid_at: Date | null;
   created_at: Date;
   razorpay_order_id: string;
-  razorpay_payment_id: string
+  razorpay_payment_id: string;
+  idempotency_key:string |null;
 }
 
 export interface UserPaymentInput {
@@ -35,6 +37,7 @@ export interface UserPaymentInput {
   paid_at: Date;
   razorpay_order_id: string;
   razorpay_payment_id: string
+  idempotency_key:string
 }
 
 

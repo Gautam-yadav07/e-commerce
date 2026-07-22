@@ -14,4 +14,5 @@ export interface PaymentRepository {
     razorpayPaymentId?: string | null,
 
   ): Promise<PaymentResponse>;
+  findPaymentByIdempotencyKey(idempotency_key:string):Promise<PaymentResponse | null>;
 }
