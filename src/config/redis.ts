@@ -20,3 +20,15 @@ export const connectRedis = async (): Promise<void> => {
     await redisClient.connect();
   }
 }
+
+
+export async function redisClose() {
+  try {
+    if (redisClient.isOpen) {
+      await redisClient.close()
+      console.log("Redis connection is closed")
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
