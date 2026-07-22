@@ -162,6 +162,7 @@ model OrderItems {
 
 model Payment {
   id            Int   @id @default(autoincrement())
+  idempotency_key String? @unique
   order_id      Int   @unique
   order         Order? @relation(fields:[order_id], references:[id])
   user_id       Int
