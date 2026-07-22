@@ -7,7 +7,9 @@ export const checkoutController = async (req: Request, res: Response, next: Next
     const userId = req.user.id;
     const { address_id } = req.body;
 
-    const order = await checkoutService(userId, address_id);
+    const idempotency_key = req.headers['x-idempotency-key'] as string
+
+    const order = await checkoutService(userId, address_id, idempotency_key);
     handleSuccessResponse(res, 201, "Order placed successfully", order)
 
   } catch (error) {

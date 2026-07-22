@@ -23,8 +23,22 @@ const productRepository = ProductRepositoryFactory.create()
 
 export const checkoutService = async (
   userId: number,
-  addressId: number
+  addressId: number,
+  idempotency_key:string
 ): Promise<{ order: OrderResponse; itemsCount: number }> => {
+
+  if(idempotency_key){
+    const exisitingOrder = await orderRepository.findOrderByIdempotencyKey(idempotency_key);
+    console.log("Existing order check Ideompotency key",exisitingOrder)
+
+    if(exisitingOrder){
+      const order = await orderRepository.findOrderItemsByOrderId(exisitingOrder.id)
+      return{
+        order:exisitingOrder,
+        itemsCount:order.length
+      }
+    }
+  }
 
   const address = await addressRepository.getAddressById(addressId);
 
@@ -116,6 +130,7 @@ export const checkoutService = async (
       state: address.state,
       country: address.country,
       pin_code: address.pin_code,
+      idempotency_key:idempotency_key
     });
 
 
@@ -132,7 +147,7 @@ export const checkoutService = async (
   }
 
 
-   await cartRepository.clearCart(tx,cart.id);
+  //  await cartRepository.clearCart(tx,cart.id);
 
     return {
       order: newOrder,
