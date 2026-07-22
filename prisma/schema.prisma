@@ -1,0 +1,228 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id             Int               @id @default(autoincrement())
+  email          String            @unique
+  name           String
+  password       String
+  phone_number   String            @unique
+  gender         Gender
+  role_id        Int
+  role_name      Role              @relation(fields: [role_id], references: [id])
+  refresh_token  String?
+  updated_at     DateTime          @updatedAt
+  created_at     DateTime          @default(now())
+  addresses      Addresses[]
+  sellerProfiles Seller_Profiles[]
+  cart       Carts?
+  orders        Order[]
+  orderItems    OrderItems[]    @relation("SellerOrderItems")
+  reset_password_token String?
+  reset_password_expiry DateTime?
+  payment     Payment[]
+
+
+  @@map("users")
+}
+
+model Role {
+  id        Int    @id @default(autoincrement())
+  role_name UserRole @unique @default(CUSTOMER)
+  users     User[]  
+
+  @@map("roles")
+}
+
+model Addresses {
+  id           Int      @id @default(autoincrement())
+  user_id      Int
+  address_line String
+  city         String
+  state        String
+  country      String
+  pin_code     String
+  user         User     @relation(fields: [user_id], references: [id])
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+  orders      Order[]
+}
+
+model Seller_Profiles {
+  id                  Int        @id @default(autoincrement())
+  user_id             Int
+  shop_name           String
+  gst_number          String
+  bank_account_number String
+  ifsc_code           String
+  created_at          DateTime   @default(now()) @db.Timestamp()
+  updated_at          DateTime   @updatedAt @db.Timestamp()
+  user                User       @relation(fields: [user_id], references: [id])
+  products            Products[]
+
+  @@map("seller_profiles")
+}
+
+model Products {
+  id          Int             @id @default(autoincrement())
+  seller_id   Int
+  seller      Seller_Profiles @relation(fields: [seller_id], references: [id])
+  name        String          @db.VarChar(255)
+  description String          @db.VarChar(255)
+  price       Decimal         @db.Decimal(10, 2)
+  discount    Decimal?        @default(0) @db.Decimal(10, 2)
+  stock       Int
+  status      ProductStatus          @default(ACTIVE)
+  created_at  DateTime        @updatedAt
+  updated_at  DateTime        @default(now())
+   cartItems     CartItems[]
+   orderItems    OrderItems[]
+
+  @@map("products")
+}
+
+model Carts {
+  id         Int      @id @default(autoincrement())
+  user_id    Int      @unique
+  user       User     @relation(fields: [user_id], references: [id])
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  cartItems CartItems[]
+
+  @@map("carts")
+}
+
+
+model CartItems {
+  id        Int     @id @default(autoincrement())
+  cart_id    Int     
+  cart      Carts    @relation(fields: [cart_id], references: [id], onDelete: Cascade)
+  product_id Int     
+  product   Products @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  quantity  Int
+  price     Decimal  @db.Decimal(10, 2)
+  created_at DateTime @default(now()) @db.Timestamp(6)
+  updated_at DateTime   @updatedAt
+
+  @@unique([cart_id, product_id], name: "unique_cart_product")
+  @@map("cart_items")
+}
+
+
+model Order {
+  id            Int         @id @default(autoincrement())
+  user_id        Int
+  idempotency_key String?   @unique       
+  user          User        @relation(fields: [user_id], references: [id], onDelete: Restrict)
+  address_id    Int?       
+  address       Addresses?    @relation(fields: [address_id], references: [id], onDelete: SetNull)
+  address_line   String?    @db.VarChar(255)
+  city          String?     @db.VarChar(100)
+  state         String?     @db.VarChar(100)
+  country       String?     @db.VarChar(100)
+  pin_code       String?     @db.VarChar(10)
+  total_amount   Decimal     @db.Decimal(10, 2)
+  payment_status PaymentStatus      @default(PENDING) 
+  order_status   OrderStatus      @default(PENDING) 
+  created_at     DateTime    @default(now())
+  updated_at     DateTime    @default(now()) @updatedAt
+  orderItems    OrderItems[]
+  payment       Payment?
+
+  @@map("orders")
+}
+
+model OrderItems {
+  id            Int      @id @default(autoincrement())
+  order_id      Int     
+  order         Order   @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  product_id    Int  
+  product       Products @relation(fields: [product_id], references: [id], onDelete: Restrict)
+  seller_id     Int     
+  seller        User?    @relation("SellerOrderItems", fields: [seller_id], references: [id], onDelete: Restrict)
+  quantity      Int
+  price         Decimal  @db.Decimal(10, 2)
+  subtotal      Decimal  @db.Decimal(10, 2)
+  order_status  OrderStatus   @default(PENDING) 
+  created_at    DateTime @default(now()) @db.Timestamp(6)
+  updated_at    DateTime @updatedAt
+
+  @@map("order_items")
+}
+
+model Payment {
+  id            Int   @id @default(autoincrement())
+  idempotency_key String? @unique
+  order_id      Int   @unique
+  order         Order? @relation(fields:[order_id], references:[id])
+  user_id       Int
+  user          User  @relation(fields:[user_id], references:[id], onDelete:Restrict)
+  total_amount    Decimal   @db.Decimal(10,2)
+  payment_method  PaymentMethod
+  transaction_id  String?   @unique
+  status          PaymentStatus
+  paid_at         DateTime? 
+  created_at      DateTime @default(now())
+  razorpay_order_id String?  @unique
+  razorpay_payment_id String? @unique
+
+  @@map("payments")
+}
+
+enum ProductStatus {
+  ACTIVE
+  INACTIVE
+  AVAILABLE
+  UNAVAILABLE
+}
+
+enum UserRole {
+  CUSTOMER
+  SELLER
+  ADMIN
+}
+
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  PROCESSING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED 
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+  RETURNED
+}
+
+enum PaymentMethod {
+  UPI
+  DEBITCARD
+  CREDITCARD
+  CASH_ON_DELEVERY
+  BANKTRANSFER
+}
